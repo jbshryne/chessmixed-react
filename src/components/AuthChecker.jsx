@@ -9,6 +9,8 @@ const AuthChecker = ({ children }) => {
   );
 
   useEffect(() => {
+    // console.log("Checking auth...");
+    // console.log(currentUser);
     if (!currentUser) navigate("/login");
   }, [currentUser, navigate]);
   return <div>{children}</div>;
