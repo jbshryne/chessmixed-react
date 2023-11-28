@@ -7,18 +7,11 @@ const Chat = () => {
     localStorage.getItem("chessmixed_currentUser")
   );
 
-  const [messages, setMessages] = useState([]);
   const [formData, setFormData] = useState({
     message: "",
     room: "",
   });
-
-  useEffect(() => {
-    socket.on("connect", () => {
-      // console.log("Connected to server");
-      setMessages([...messages, "Connected to server as " + socket.id]);
-    });
-  }, []);
+  const [messages, setMessages] = useState([]);
 
   const handleFormData = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,10 +21,31 @@ const Chat = () => {
     console.log(formData.message);
 
     const userName = `${currentUser.displayName}: `;
-
     const newMessage = userName + formData.message;
-    setMessages([...messages, newMessage]);
+
+    socket.emit("sendMessage", newMessage);
+    setMessages((messages) => [...messages, newMessage]);
   };
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      // console.log("Connected to server");
+      setMessages((messages) => [
+        ...messages,
+        "Connected to server as " + socket.id,
+      ]);
+    });
+
+    socket.on("disconnect", () => {
+      // console.log("Disconnected from server");
+      setMessages((messages) => [...messages, "Disconnected from server"]);
+    });
+
+    socket.on("getMessage", (message) => {
+      // console.log("newMessage", message);
+      setMessages((messages) => [...messages, message]);
+    });
+  }, []);
 
   return (
     <div>
@@ -61,7 +75,6 @@ const Chat = () => {
       <button type="button" id="room-button">
         Join
       </button>
-      {/* </div> */}
     </div>
   );
 };

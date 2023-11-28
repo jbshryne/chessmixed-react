@@ -19,7 +19,6 @@ const Login = ({ setCurrentUser }) => {
 
     const data = await response.json();
     console.log(data);
-    setCurrentUser(data);
     localStorage.setItem("chessmixed_currentUser", JSON.stringify(data));
   };
 

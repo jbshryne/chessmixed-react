@@ -1,15 +1,31 @@
 import "./App.css";
 import { Outlet } from "react-router-dom";
 // import { Route, Routes } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { socket } from "./socket";
+import { useEffect, useState } from "react";
+// import { socket } from "./socket";
 import { ConnectionState } from "./components/ConnectionState";
-import { ConnectionManager } from "./components/ConnectionManager";
-
-// import { io } from "socket.io-client";
+// import { ConnectionManager } from "./components/ConnectionManager";
 // import Chat from "./components/Chat";
 
-// const socket = io("http://localhost:3200"); // Adjust the URL to match your server
+import io from "socket.io-client";
+const socket = io.connect("http://localhost:3200");
+
+function ConnectionManager() {
+  function connect() {
+    socket.connect();
+  }
+
+  function disconnect() {
+    socket.disconnect();
+  }
+
+  return (
+    <>
+      <button onClick={connect}>Connect</button>
+      <button onClick={disconnect}>Disconnect</button>
+    </>
+  );
+}
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
