@@ -8,7 +8,7 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Lobby from "./pages/Lobby";
 import AuthChecker from "./components/AuthChecker";
-import GamesList from "./pages/GamesList";
+import Games from "./pages/Games";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,7 +27,7 @@ const router = createBrowserRouter(
         path="/games"
         element={
           <AuthChecker>
-            <GamesList />
+            <Games />
           </AuthChecker>
         }
       />

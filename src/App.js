@@ -1,11 +1,10 @@
 import "./App.css";
 import { Outlet } from "react-router-dom";
 // import { Route, Routes } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 // import { socket } from "./socket";
-import { ConnectionState } from "./components/ConnectionState";
+// import { ConnectionState } from "./components/ConnectionState";
 // import { ConnectionManager } from "./components/ConnectionManager";
-// import Chat from "./components/Chat";
 
 import io from "socket.io-client";
 const socket = io.connect("http://localhost:3200");
@@ -21,26 +20,30 @@ function ConnectionManager() {
 
   return (
     <>
-      <button onClick={connect}>Connect</button>
-      <button onClick={disconnect}>Disconnect</button>
+      <button onClick={connect} style={{ display: "none" }}>
+        Connect
+      </button>
+      <button onClick={disconnect} style={{ display: "none" }}>
+        Disconnect
+      </button>
     </>
   );
 }
 
 function App() {
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  // const [isConnected, setIsConnected] = useState(socket.connected);
 
   useEffect(() => {
     // Use socket here
 
     function onConnect() {
       console.log("Connected!");
-      setIsConnected(true);
+      // setIsConnected(true);
     }
 
     function onDisconnect() {
       console.log("Disconnected!");
-      setIsConnected(false);
+      // setIsConnected(false);
     }
 
     socket.on("connect", onConnect);
@@ -63,7 +66,7 @@ function App() {
 
   return (
     <div className="App">
-      <ConnectionState isConnected={isConnected} />
+      {/* <ConnectionState isConnected={isConnected} /> */}
       <Outlet></Outlet>
       <ConnectionManager />
       {/* <button onClick={() => socket.emit("hello", "world!")}>Send</button> */}
