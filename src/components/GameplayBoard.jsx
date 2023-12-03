@@ -3,7 +3,7 @@ import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 
 const GameplayBoard = ({ currentGame }) => {
-  console.log(currentGame.fen);
+  // console.log(currentGame.fen);
 
   const [game, setGame] = useState(new Chess(currentGame.fen));
 

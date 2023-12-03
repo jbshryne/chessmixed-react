@@ -23,7 +23,7 @@ const Games = () => {
       });
 
       const data = await response.json();
-      // console.log(data);
+      console.log(data);
       setAllGames(data);
     }
     fetchData();
@@ -44,7 +44,7 @@ const Games = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: currentUser._id,
+        currentUser,
       }),
     });
 

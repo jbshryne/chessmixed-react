@@ -13,20 +13,20 @@ const Game = () => {
   //     localStorage.getItem("chessmixed_currentUser")
   //   );
 
-  useEffect(() => {
-    async function fetchGame() {
-      const response = await fetch(`http://localhost:3200/games/${gameId}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // body: JSON.stringify({ userId: currentUser._id }),
-      });
+  // useEffect(() => {
+  //   async function fetchGame() {
+  //     const response = await fetch(`http://localhost:3200/games/${gameId}`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       // body: JSON.stringify({ userId: currentUser._id }),
+  //     });
 
-      const data = await response.json();
-      //   console.log(data);
-    }
-    fetchGame();
-  }, [gameId]);
+  //     const data = await response.json();
+  //     console.log(data);
+  //   }
+  //   fetchGame();
+  // }, [gameId]);
 
   return (
     <div>
