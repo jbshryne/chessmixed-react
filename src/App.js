@@ -1,49 +1,29 @@
+// App.js
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Outlet } from "react-router-dom";
-// import { Route, Routes } from "react-router-dom";
-import { useEffect } from "react";
-// import { socket } from "./socket";
-// import { ConnectionState } from "./components/ConnectionState";
-// import { ConnectionManager } from "./components/ConnectionManager";
-
+import { useEffect, useState } from "react";
+import Home from "./pages/Home";
+import Auth from "./pages/Auth";
+import AuthChecker from "./components/AuthChecker";
+import Lobby from "./pages/Lobby";
+import Games from "./pages/Games";
+import Game from "./pages/Game";
 import io from "socket.io-client";
+import { GameProvider } from "./store/game-context";
+// import { Chess } from "chess.js";
+
 const socket = io.connect("http://localhost:3200");
 
-function ConnectionManager() {
-  function connect() {
-    socket.connect();
-  }
-
-  function disconnect() {
-    socket.disconnect();
-  }
-
-  return (
-    <>
-      <button onClick={connect} style={{ display: "none" }}>
-        Connect
-      </button>
-      <button onClick={disconnect} style={{ display: "none" }}>
-        Disconnect
-      </button>
-    </>
-  );
-}
-
 function App() {
-  // const [isConnected, setIsConnected] = useState(socket.connected);
-
   useEffect(() => {
     // Use socket here
 
     function onConnect() {
       console.log("Connected!");
-      // setIsConnected(true);
     }
 
     function onDisconnect() {
       console.log("Disconnected!");
-      // setIsConnected(false);
     }
 
     socket.on("connect", onConnect);
@@ -55,22 +35,42 @@ function App() {
     };
   }, []);
 
-  // const [currentUser, setCurrentUser] = useState(null);
-
-  // useEffect(() => {
-  //   const user = JSON.parse(localStorage.getItem("chessmixed-currentUser"));
-  //   if (user) {
-  //     setCurrentUser(user);
-  //   }
-  // }, []);
+  const [currentGame, setCurrentGame] = useState(null);
 
   return (
-    <div className="App">
-      {/* <ConnectionState isConnected={isConnected} /> */}
-      <Outlet></Outlet>
-      <ConnectionManager />
-      {/* <button onClick={() => socket.emit("hello", "world!")}>Send</button> */}
-    </div>
+    // <div>Test</div>
+    <GameProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Auth />} />
+          <Route
+            path="/lobby"
+            element={
+              <AuthChecker>
+                <Lobby />
+              </AuthChecker>
+            }
+          />
+          <Route
+            path="/games"
+            element={
+              <AuthChecker>
+                <Games setCurrentGame={setCurrentGame} />
+              </AuthChecker>
+            }
+          />
+          <Route
+            path="/game/:gameId"
+            element={
+              <AuthChecker>
+                <Game currentGame={currentGame} />
+              </AuthChecker>
+            }
+          />
+        </Routes>
+      </Router>
+    </GameProvider>
   );
 }
 
