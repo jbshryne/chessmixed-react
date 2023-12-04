@@ -1,20 +1,42 @@
 import { useState } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
+import { useGame } from "../store/game-context";
 
-const GameplayBoard = ({ currentGame }) => {
+const GameplayBoard = () => {
   // console.log(currentGame.fen);
 
-  const [game, setGame] = useState(new Chess(currentGame.fen));
+  const { selectedGame, setGame } = useGame();
 
-  function makeAMove(move) {
-    const gameCopy = { ...game };
-    const result = gameCopy.move(move);
+  const [currentGame, setCurrentGame] = useState(new Chess(selectedGame.fen));
+  const gameId = currentGame._id;
+  //
+  async function makeAMove(move) {
+    const game = new Chess(currentGame.fen());
+    const result = game.move(move);
+    setCurrentGame(game);
+
+    const gameCopy = selectedGame;
+    gameCopy.fen = game.fen();
     setGame(gameCopy);
+
+    const response = await fetch(`http://localhost:3200/games/${gameId}/move`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ gameId, fen: game.fen() }),
+    });
+
+    const data = await response.json();
+    console.log(data);
+
     return result; // null if the move was illegal, the move object if the move was legal
   }
 
   function onDrop(sourceSquare, targetSquare) {
+    console.log(sourceSquare, targetSquare);
+
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
@@ -29,7 +51,11 @@ const GameplayBoard = ({ currentGame }) => {
 
   return (
     <div>
-      <Chessboard position={game.fen()} boardWidth={500} />
+      <Chessboard
+        position={currentGame.fen()}
+        boardWidth={500}
+        onPieceDrop={onDrop}
+      />
     </div>
   );
 };

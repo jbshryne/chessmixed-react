@@ -15,6 +15,11 @@ code {
     monospace;
 }
 
+a {
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+}
+
 .App {
   margin: 0 auto;
   display: flex;

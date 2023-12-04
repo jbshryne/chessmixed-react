@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 import GameplayBoard from "../components/GameplayBoard";
-import { useGame } from "../store/game-context";
+// import { useGame } from "../store/game-context";
 
 const Game = () => {
-  const { gameId } = useParams();
-  const { selectedGame } = useGame();
+  // const { gameId } = useParams();
+  // const { selectedGame } = useGame();
 
-  console.log(selectedGame);
+  // console.log(selectedGame);
 
   //   const currentUser = JSON.parse(
   //     localStorage.getItem("chessmixed_currentUser")
@@ -30,7 +29,7 @@ const Game = () => {
 
   return (
     <div>
-      <GameplayBoard currentGame={selectedGame} />
+      <GameplayBoard />
     </div>
   );
 };
