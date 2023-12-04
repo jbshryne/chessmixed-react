@@ -9,7 +9,7 @@ const GameplayBoard = () => {
   const { selectedGame, setGame } = useGame();
 
   const [currentGame, setCurrentGame] = useState(new Chess(selectedGame.fen));
-  const gameId = currentGame._id;
+  const gameId = selectedGame._id;
   //
   async function makeAMove(move) {
     const game = new Chess(currentGame.fen());
