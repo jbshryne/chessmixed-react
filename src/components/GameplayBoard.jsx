@@ -13,11 +13,27 @@ const GameplayBoard = () => {
   //
   async function makeAMove(move) {
     const game = new Chess(currentGame.fen());
-    const result = game.move(move);
+
+    let result;
+
+    try {
+      result = game.move(move);
+      console.log(result);
+    } catch (error) {
+      // console.log(error);
+      return null;
+    }
+
+    console.log(game.fen());
+
     setCurrentGame(game);
 
     const gameCopy = selectedGame;
     gameCopy.fen = game.fen();
+    result.color === "w"
+      ? (gameCopy.currentTurn = "b")
+      : (gameCopy.currentTurn = "w");
+
     setGame(gameCopy);
 
     const response = await fetch(`http://localhost:3200/games/${gameId}/move`, {
@@ -35,7 +51,7 @@ const GameplayBoard = () => {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    console.log(sourceSquare, targetSquare);
+    // console.log(sourceSquare, targetSquare);
 
     const move = makeAMove({
       from: sourceSquare,
