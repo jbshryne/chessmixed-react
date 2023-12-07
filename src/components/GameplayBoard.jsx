@@ -10,7 +10,16 @@ const GameplayBoard = () => {
 
   const [currentGame, setCurrentGame] = useState(new Chess(selectedGame.fen));
   const gameId = selectedGame._id;
-  //
+
+  function isDraggablePiece({ piece }) {
+    console.log(piece);
+    const currentTurn = selectedGame.currentTurn;
+    if (piece.includes(currentTurn)) {
+      return true;
+    }
+    return false;
+  }
+
   async function makeAMove(move) {
     const game = new Chess(currentGame.fen());
 
@@ -25,7 +34,6 @@ const GameplayBoard = () => {
     }
 
     console.log(game.fen());
-
     setCurrentGame(game);
 
     const gameCopy = selectedGame;
@@ -33,6 +41,16 @@ const GameplayBoard = () => {
     result.color === "w"
       ? (gameCopy.currentTurn = "b")
       : (gameCopy.currentTurn = "w");
+
+    if (result.flags.includes("c")) {
+      // capture
+      const piece = result.captured;
+      if (result.color === "w") {
+        gameCopy.capturedBlack.push(piece);
+      } else {
+        gameCopy.capturedWhite.push(piece);
+      }
+    }
 
     setGame(gameCopy);
 
@@ -71,6 +89,7 @@ const GameplayBoard = () => {
         position={currentGame.fen()}
         boardWidth={500}
         onPieceDrop={onDrop}
+        isDraggablePiece={isDraggablePiece}
       />
     </div>
   );
