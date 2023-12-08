@@ -65,9 +65,15 @@ const Games = () => {
               >
                 <h4>Game {idx + 1}</h4>
                 <Chessboard
-                  boardWidth={250}
-                  arePiecesDraggable={false}
                   position={game.fen}
+                  boardWidth={250}
+                  boardOrientation={
+                    game.playerBlack &&
+                    game.playerBlack.playerId === currentUser._id
+                      ? "black"
+                      : "white"
+                  }
+                  arePiecesDraggable={false}
                 />
               </li>
             </Link>

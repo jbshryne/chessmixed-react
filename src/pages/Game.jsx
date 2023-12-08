@@ -1,6 +1,7 @@
 // import { useParams } from "react-router-dom";
-import GameplayBoard from "../components/GameplayBoard";
 // import { useGame } from "../store/game-context";
+import GameplayBoard from "../components/GameplayBoard";
+import StatusBox from "../components/StatusBox";
 
 const Game = () => {
   // const { gameId } = useParams();
@@ -12,24 +13,11 @@ const Game = () => {
   //     localStorage.getItem("chessmixed_currentUser")
   //   );
 
-  // useEffect(() => {
-  //   async function fetchGame() {
-  //     const response = await fetch(`http://localhost:3200/games/${gameId}`, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       // body: JSON.stringify({ userId: currentUser._id }),
-  //     });
-
-  //     const data = await response.json();
-  //     console.log(data);
-  //   }
-  //   fetchGame();
-  // }, [gameId]);
-
   return (
-    <div>
+    <div id="game-page">
+      <StatusBox player="opponent" />
       <GameplayBoard />
+      <StatusBox player="self" />
     </div>
   );
 };

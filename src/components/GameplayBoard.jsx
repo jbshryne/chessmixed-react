@@ -12,7 +12,6 @@ const GameplayBoard = () => {
   const gameId = selectedGame._id;
 
   function isDraggablePiece({ piece }) {
-    console.log(piece);
     const currentTurn = selectedGame.currentTurn;
     if (piece.includes(currentTurn)) {
       return true;

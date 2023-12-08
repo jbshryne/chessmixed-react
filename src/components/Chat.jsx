@@ -23,8 +23,13 @@ const Chat = () => {
     const userName = `${currentUser.displayName}: `;
     const newMessage = userName + formData.message;
 
-    socket.emit("sendMessage", newMessage);
+    socket.emit("sendMessage", { message: newMessage, room: formData.room });
     setMessages((messages) => [...messages, newMessage]);
+  };
+
+  const handleJoinRoom = () => {
+    console.log(formData.room);
+    socket.emit("joinRoom", formData.room);
   };
 
   useEffect(() => {
@@ -72,7 +77,7 @@ const Chat = () => {
         id="room-input"
         onChange={handleFormData}
       />
-      <button type="button" id="room-button">
+      <button type="button" id="room-button" onClick={handleJoinRoom}>
         Join
       </button>
     </div>
