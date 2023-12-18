@@ -10,23 +10,27 @@ const Lobby = () => {
   );
 
   useEffect(() => {
-    socket.on("userJoined", (user) => {
-      console.log("userJoined", user);
-      setUsersPresent((usersPresent) => [...usersPresent, user]);
+    socket.on("usersInLobby", (usersInLobby) => {
+      console.log("usersInLobby", usersInLobby);
+      setUsersPresent(usersInLobby);
     });
 
-    socket.on("userLeft", (user) => {
-      console.log("userLeft", user);
-      setUsersPresent((usersPresent) =>
-        usersPresent.filter((presentUser) => presentUser._id !== user._id)
-      );
+    socket.on("userJoined", (user, usersInLobby) => {
+      console.log("userJoined", user, socket);
+      console.log("usersInLobby", usersInLobby);
+      setUsersPresent(usersInLobby);
     });
 
-    socket.on("userDisconnected", (socketId) => {
-      console.log("userDisconnected", socketId);
-      setUsersPresent((usersPresent) =>
-        usersPresent.filter((presentUser) => presentUser.socketId !== socketId)
-      );
+    // socket.on("userLeft", (user) => {
+    //   console.log("userLeft", user);
+    //   setUsersPresent((usersPresent) =>
+    //     usersPresent.filter((presentUser) => presentUser._id !== user._id)
+    //   );
+    // });
+
+    socket.on("userDisconnected", (loggedInUsers) => {
+      // console.log("userDisconnected", socketId);
+      setUsersPresent(loggedInUsers);
     });
   }, []);
 
@@ -34,10 +38,10 @@ const Lobby = () => {
     // Join the "lobby" room when the page loads
     socket.emit("joinLobby", currentUser);
 
-    return () => {
-      // Leave the "lobby" room when the page unmounts
-      socket.emit("leaveLobby", currentUser);
-    };
+    // return () => {
+    //   // Leave the "lobby" room when the page unmounts
+    //   socket.emit("leaveLobby", currentUser);
+    // };
   }, []);
 
   return (

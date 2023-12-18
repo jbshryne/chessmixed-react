@@ -4,12 +4,12 @@ import { Chess } from "chess.js";
 import { useGame } from "../store/game-context";
 
 const GameplayBoard = () => {
-  // console.log(currentGame.fen);
-
   const { selectedGame, setGame } = useGame();
-
-  const [currentGame, setCurrentGame] = useState(new Chess(selectedGame.fen));
+  const [chess, setChess] = useState(new Chess(selectedGame.fen));
   const gameId = selectedGame._id;
+  const currentUser = JSON.parse(
+    localStorage.getItem("chessmixed_currentUser")
+  );
 
   function isDraggablePiece({ piece }) {
     const currentTurn = selectedGame.currentTurn;
@@ -20,23 +20,22 @@ const GameplayBoard = () => {
   }
 
   async function makeAMove(move) {
-    const game = new Chess(currentGame.fen());
-
+    const newChess = new Chess(chess.fen());
     let result;
 
     try {
-      result = game.move(move);
+      result = newChess.move(move);
       console.log(result);
     } catch (error) {
       // console.log(error);
       return null;
     }
+    console.log(newChess.fen());
 
-    console.log(game.fen());
-    setCurrentGame(game);
+    setChess(newChess);
 
     const gameCopy = selectedGame;
-    gameCopy.fen = game.fen();
+    gameCopy.fen = newChess.fen();
     result.color === "w"
       ? (gameCopy.currentTurn = "b")
       : (gameCopy.currentTurn = "w");
@@ -58,7 +57,7 @@ const GameplayBoard = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ gameId, fen: game.fen() }),
+      body: JSON.stringify({ gameId, fen: newChess.fen() }),
     });
 
     const data = await response.json();
@@ -85,10 +84,16 @@ const GameplayBoard = () => {
   return (
     <div>
       <Chessboard
-        position={currentGame.fen()}
+        position={chess.fen()}
         boardWidth={500}
         onPieceDrop={onDrop}
         isDraggablePiece={isDraggablePiece}
+        boardOrientation={
+          selectedGame.playerBlack &&
+          selectedGame.playerBlack.playerId === currentUser._id
+            ? "black"
+            : "white"
+        }
       />
     </div>
   );

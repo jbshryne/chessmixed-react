@@ -58,7 +58,7 @@ const Games = () => {
       <ul id="games-container">
         {allGames.map((game, idx) => {
           return (
-            <Link to={`/game/${game._id}`} key={game._id}>
+            <Link to={`/game`} key={game._id}>
               <li
                 className="game-thumbnail"
                 onClick={() => handleGameSelection(game)}

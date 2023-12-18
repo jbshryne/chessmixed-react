@@ -61,7 +61,7 @@ function App() {
             }
           />
           <Route
-            path="/game/:gameId"
+            path="/game"
             element={
               <AuthChecker>
                 <Game currentGame={currentGame} />

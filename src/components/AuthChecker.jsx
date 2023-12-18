@@ -8,12 +8,16 @@ const AuthChecker = ({ children }) => {
     localStorage.getItem("chessmixed_currentUser")
   );
 
+  // console.log("AuthChecker");
+  // console.log(currentUser);
+
   useEffect(() => {
     // console.log("Checking auth...");
     // console.log(currentUser);
     if (!currentUser) navigate("/login");
   }, [currentUser, navigate]);
-  return <div>{children}</div>;
+
+  return <div>{currentUser && children}</div>;
 };
 
 export default AuthChecker;
