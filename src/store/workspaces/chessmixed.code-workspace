@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": "../../.."
+    },
+    {
+      "path": "../../../../chessmixed-backend"
+    },
+    {
+      "path": "../../../../../../ga/capstone/dungeon-crawl"
+    }
+  ],
+  "settings": {}
+}
