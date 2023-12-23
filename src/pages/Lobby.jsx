@@ -15,7 +15,7 @@ const Lobby = () => {
       setUsersPresent(usersInLobby);
     });
 
-    socket.on("userJoined", (user, usersInLobby) => {
+    socket.on("userLoggedIn", (user, usersInLobby) => {
       console.log("userJoined", user, socket);
       console.log("usersInLobby", usersInLobby);
       setUsersPresent(usersInLobby);
@@ -36,7 +36,7 @@ const Lobby = () => {
 
   useEffect(() => {
     // Join the "lobby" room when the page loads
-    socket.emit("joinLobby", currentUser);
+    socket.emit("login", currentUser);
 
     // return () => {
     //   // Leave the "lobby" room when the page unmounts

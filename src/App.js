@@ -1,5 +1,5 @@
 // App.js
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { useEffect, useState } from "react";
 import Home from "./pages/Home";
@@ -10,6 +10,7 @@ import Games from "./pages/Games";
 import Game from "./pages/Game";
 import io from "socket.io-client";
 import { GameProvider } from "./store/game-context";
+import Header from "./components/Header";
 // import { Chess } from "chess.js";
 
 const socket = io.connect("http://localhost:3200");
@@ -38,9 +39,9 @@ function App() {
   const [currentGame, setCurrentGame] = useState(null);
 
   return (
-    // <div>Test</div>
-    <GameProvider>
-      <Router>
+    <div>
+      <Header />
+      <GameProvider>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Auth />} />
@@ -69,8 +70,8 @@ function App() {
             }
           />
         </Routes>
-      </Router>
-    </GameProvider>
+      </GameProvider>
+    </div>
   );
 }
 

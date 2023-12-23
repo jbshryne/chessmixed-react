@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { Chessboard } from "react-chessboard";
 import { Link } from "react-router-dom";
 import { useGame } from "../store/game-context";
+import { Chessboard } from "react-chessboard";
 
 const Games = () => {
-  const { setGame } = useGame();
-
   const [allGames, setAllGames] = useState([]);
+  const { setGame } = useGame();
 
   const currentUser = JSON.parse(
     localStorage.getItem("chessmixed_currentUser")

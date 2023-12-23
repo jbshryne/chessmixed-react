@@ -1,15 +1,25 @@
-import { useState } from "react";
-import { Chessboard } from "react-chessboard";
-import { Chess } from "chess.js";
+import { useState, useEffect } from "react";
 import { useGame } from "../store/game-context";
+import { socket } from "../socket";
+import { Chess } from "chess.js";
+import { Chessboard } from "react-chessboard";
 
 const GameplayBoard = () => {
   const { selectedGame, setGame } = useGame();
-  const [chess, setChess] = useState(new Chess(selectedGame.fen));
   const gameId = selectedGame._id;
+  const [chess, setChess] = useState(new Chess(selectedGame.fen));
   const currentUser = JSON.parse(
     localStorage.getItem("chessmixed_currentUser")
   );
+
+  // const [move, setMove] = useState({
+  //   from: "",
+  //   to: "",
+  // });
+  // function handleMoveInput(event) {
+  //   const { id, value } = event.target;
+  //   setMove((prevMove) => ({ ...prevMove, [id]: value }));
+  // }
 
   function isDraggablePiece({ piece }) {
     const currentTurn = selectedGame.currentTurn;
@@ -18,6 +28,16 @@ const GameplayBoard = () => {
     }
     return false;
   }
+
+  // async function recieveNewMove(move) {
+  //   const result = makeAMove(move);
+
+  //   if (result === null) {
+  //     alert("Illegal move");
+  //     return;
+  //   }
+
+  // }
 
   async function makeAMove(move) {
     const newChess = new Chess(chess.fen());
@@ -30,7 +50,7 @@ const GameplayBoard = () => {
       // console.log(error);
       return null;
     }
-    console.log(newChess.fen());
+    // console.log(newChess.fen());
 
     setChess(newChess);
 
@@ -52,16 +72,20 @@ const GameplayBoard = () => {
 
     setGame(gameCopy);
 
-    const response = await fetch(`http://localhost:3200/games/${gameId}/move`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ gameId, fen: newChess.fen() }),
-    });
-
-    const data = await response.json();
-    console.log(data);
+    if (move.local) {
+      const response = await fetch(
+        `http://localhost:3200/games/${gameId}/move`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ gameId, fen: newChess.fen() }),
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+    }
 
     return result; // null if the move was illegal, the move object if the move was legal
   }
@@ -73,13 +97,32 @@ const GameplayBoard = () => {
       from: sourceSquare,
       to: targetSquare,
       promotion: "q", // always promote to a queen for example simplicity
+      local: true,
     });
 
     // illegal move
     if (move === null) return false;
-    // setTimeout(makeRandomMove, 200);
+
+    socket.emit(
+      "sendNewMove",
+      {
+        from: sourceSquare,
+        to: targetSquare,
+        promotion: "q",
+        local: false,
+      },
+      gameId
+    );
+
     return true;
   }
+
+  useEffect(() => {
+    socket.on("getNewMove", (move) => {
+      // console.log("newMove", move);
+      makeAMove(move);
+    });
+  });
 
   return (
     <div>
@@ -95,6 +138,14 @@ const GameplayBoard = () => {
             : "white"
         }
       />
+      {/* <input
+        type="text"
+        id="from"
+        placeholder="from"
+        onChange={handleMoveInput}
+      />
+      <input type="text" id="to" placeholder="to" onChange={handleMoveInput} />
+      <button onClick={() => makeAMove(move)}>Move</button> */}
     </div>
   );
 };
