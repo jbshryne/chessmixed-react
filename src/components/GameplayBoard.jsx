@@ -24,17 +24,23 @@ const GameplayBoard = () => {
   // }
 
   function isDraggablePiece({ piece }) {
-    const currentTurn = selectedGame.currentTurn;
-    const playerColor =
-      selectedGame.playerBlack &&
-      selectedGame.playerBlack.playerId === currentUser._id
-        ? "b"
-        : "w";
+    if (
+      selectedGame.playerWhite.username !== selectedGame.playerBlack.username
+    ) {
+      const currentTurn = selectedGame.currentTurn;
+      const playerColor =
+        selectedGame.playerBlack &&
+        selectedGame.playerBlack.playerId === currentUser._id
+          ? "b"
+          : "w";
 
-    if (piece.includes(currentTurn) && currentTurn === playerColor) {
+      if (piece.includes(currentTurn) && currentTurn === playerColor) {
+        return true;
+      }
+      return false;
+    } else {
       return true;
     }
-    return false;
   }
 
   // async function recieveNewMove(move) {
@@ -88,7 +94,11 @@ const GameplayBoard = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ gameId, fen: newChess.fen() }),
+          body: JSON.stringify({
+            gameId,
+            fen: newChess.fen(),
+            currentTurn: gameCopy.currentTurn,
+          }),
         }
       );
       const data = await response.json();
