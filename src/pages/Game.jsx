@@ -1,11 +1,11 @@
-import { useGame } from "../store/game-context";
+// import { useGame } from "../store/game-context";
 import GameplayBoard from "../components/GameplayBoard";
 import StatusBox from "../components/StatusBox";
 // import { socket } from "../socket";
 
 const Game = () => {
-  const { selectedGame } = useGame();
-  console.log(selectedGame);
+  // const { selectedGame } = useGame();
+  // console.log(selectedGame);
 
   return (
     <div id="game-page">

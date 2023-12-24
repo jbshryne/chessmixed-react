@@ -7,7 +7,7 @@ const StatusBox = ({ player }) => {
     localStorage.getItem("chessmixed_currentUser")
   );
 
-  console.log(selectedGame, player, currentUser);
+  // console.log(selectedGame, player, currentUser);
 
   const playerWhiteName = selectedGame.playerWhite
     ? selectedGame.playerWhite.displayName
@@ -30,7 +30,7 @@ const StatusBox = ({ player }) => {
         : playerWhiteName;
   }
 
-  return <div className="status-box">{playerName}</div>;
+  return <h2 className="status-box">{playerName}</h2>;
 };
 
 export default StatusBox;

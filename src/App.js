@@ -48,7 +48,7 @@ function App() {
           <Route
             path="/lobby"
             element={
-              <AuthChecker>
+              <AuthChecker targetUrl="/lobby">
                 <Lobby />
               </AuthChecker>
             }
@@ -56,7 +56,7 @@ function App() {
           <Route
             path="/games"
             element={
-              <AuthChecker>
+              <AuthChecker targetUrl="/games">
                 <Games setCurrentGame={setCurrentGame} />
               </AuthChecker>
             }
@@ -64,7 +64,7 @@ function App() {
           <Route
             path="/game"
             element={
-              <AuthChecker>
+              <AuthChecker targetUrl="/game">
                 <Game currentGame={currentGame} />
               </AuthChecker>
             }

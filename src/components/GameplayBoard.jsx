@@ -12,6 +12,8 @@ const GameplayBoard = () => {
     localStorage.getItem("chessmixed_currentUser")
   );
 
+  console.log(currentUser);
+
   // const [move, setMove] = useState({
   //   from: "",
   //   to: "",
@@ -23,7 +25,13 @@ const GameplayBoard = () => {
 
   function isDraggablePiece({ piece }) {
     const currentTurn = selectedGame.currentTurn;
-    if (piece.includes(currentTurn)) {
+    const playerColor =
+      selectedGame.playerBlack &&
+      selectedGame.playerBlack.playerId === currentUser._id
+        ? "b"
+        : "w";
+
+    if (piece.includes(currentTurn) && currentTurn === playerColor) {
       return true;
     }
     return false;
