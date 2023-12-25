@@ -12,7 +12,7 @@ export const GameProvider = ({ children }) => {
   const [selectedGame, setSelectedGame] = useState(storedGame);
 
   const setGame = (game) => {
-    console.log(game);
+    // console.log(game);
     setSelectedGame(game);
     localStorage.setItem("chessmixed-selectedGame", JSON.stringify(game));
   };

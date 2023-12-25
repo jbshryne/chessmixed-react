@@ -12,7 +12,7 @@ const GameplayBoard = () => {
     localStorage.getItem("chessmixed_currentUser")
   );
 
-  console.log(currentUser);
+  // console.log(currentUser);
 
   // const [move, setMove] = useState({
   //   from: "",
@@ -108,6 +108,11 @@ const GameplayBoard = () => {
     return result; // null if the move was illegal, the move object if the move was legal
   }
 
+  function handleReset() {
+    // setChess(new Chess());
+    console.log("reset");
+  }
+
   function onDrop(sourceSquare, targetSquare) {
     // console.log(sourceSquare, targetSquare);
 
@@ -129,7 +134,7 @@ const GameplayBoard = () => {
         promotion: "q",
         local: false,
       },
-      gameId
+      `game-${gameId}`
     );
 
     return true;
@@ -164,6 +169,7 @@ const GameplayBoard = () => {
       />
       <input type="text" id="to" placeholder="to" onChange={handleMoveInput} />
       <button onClick={() => makeAMove(move)}>Move</button> */}
+      <button onClick={handleReset}>Reset Board</button>
     </div>
   );
 };

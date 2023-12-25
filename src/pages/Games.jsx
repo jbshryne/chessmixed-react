@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useGame } from "../store/game-context";
+import { socket } from "../socket";
 import { Chessboard } from "react-chessboard";
 
 const Games = () => {
@@ -29,9 +30,9 @@ const Games = () => {
   }, [currentUser._id]);
 
   const handleGameSelection = (selectedGame) => {
-    // console.log(selectedGame);
+    console.log(selectedGame);
 
-    // ???
+    socket.emit("joinRoom", `game-${selectedGame._id}`);
 
     setGame(selectedGame);
   };
@@ -51,19 +52,37 @@ const Games = () => {
     console.log(data);
   };
 
+  const handleCreateGame = async () => {
+    const response = await fetch("http://localhost:3200/games/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        currentUser,
+      }),
+    });
+
+    const data = await response.json();
+    console.log(data);
+  };
+
   return (
     <div id="games-page">
       <h1>{currentUser.displayName}'s Games</h1>
+      <button onClick={handleCreateGame}>create new game</button>
+
       <ul id="games-container">
         {allGames.map((game, idx) => {
           return (
             <Link to={`/game`} key={game._id}>
               <li
-                className="game-thumbnail"
+                className="game-container"
                 onClick={() => handleGameSelection(game)}
               >
                 <h4>Game {idx + 1}</h4>
                 <Chessboard
+                  className="game-thumbnail"
                   position={game.fen}
                   boardWidth={250}
                   boardOrientation={
@@ -74,6 +93,12 @@ const Games = () => {
                   }
                   arePiecesDraggable={false}
                 />
+
+                <div className="controls">
+                  <button>PLAY</button>
+                  <button>EDIT</button>
+                  <button>DELETE</button>
+                </div>
               </li>
             </Link>
           );
