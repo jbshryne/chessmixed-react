@@ -65,6 +65,11 @@ const Games = () => {
 
     const data = await response.json();
     console.log(data);
+
+    if (data.success) {
+      const updatedGames = [...allGames, data.game];
+      setAllGames(updatedGames);
+    }
   };
 
   const handleDeleteGame = async (gameId) => {
@@ -82,6 +87,11 @@ const Games = () => {
 
     const data = await response.json();
     console.log(data);
+
+    if (data.success) {
+      const updatedGames = allGames.filter((game) => game._id !== gameId);
+      setAllGames(updatedGames);
+    }
   };
 
   return (
