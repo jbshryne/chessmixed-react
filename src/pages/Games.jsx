@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useGame } from "../store/game-context";
 import { socket } from "../socket";
 import { Chessboard } from "react-chessboard";
@@ -7,6 +7,7 @@ import { Chessboard } from "react-chessboard";
 const Games = () => {
   const [allGames, setAllGames] = useState([]);
   const { setGame } = useGame();
+  const navigate = useNavigate();
 
   const currentUser = JSON.parse(
     localStorage.getItem("chessmixed_currentUser")
@@ -31,10 +32,9 @@ const Games = () => {
 
   const handleGameSelection = (selectedGame) => {
     console.log(selectedGame);
-
     socket.emit("joinRoom", `game-${selectedGame._id}`);
-
     setGame(selectedGame);
+    navigate(`/game/${selectedGame._id}`);
   };
 
   const handleSeedGames = async () => {
@@ -67,6 +67,23 @@ const Games = () => {
     console.log(data);
   };
 
+  const handleDeleteGame = async (gameId) => {
+    const response = await fetch("http://localhost:3200/games/delete", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        gameId,
+        // currentUser,
+      }),
+      gameId,
+    });
+
+    const data = await response.json();
+    console.log(data);
+  };
+
   return (
     <div id="games-page">
       <h1>{currentUser.displayName}'s Games</h1>
@@ -75,12 +92,13 @@ const Games = () => {
       <ul id="games-container">
         {allGames.map((game, idx) => {
           return (
-            <Link to={`/game`} key={game._id}>
-              <li
-                className="game-container"
+            <li className="game-container" key={game._id}>
+              <h4>Game {idx + 1}</h4>
+              <div
+                className="board-container"
+                // to={}
                 onClick={() => handleGameSelection(game)}
               >
-                <h4>Game {idx + 1}</h4>
                 <Chessboard
                   className="game-thumbnail"
                   position={game.fen}
@@ -93,14 +111,15 @@ const Games = () => {
                   }
                   arePiecesDraggable={false}
                 />
-
-                <div className="controls">
-                  <button>PLAY</button>
-                  <button>EDIT</button>
-                  <button>DELETE</button>
-                </div>
-              </li>
-            </Link>
+              </div>
+              <div className="controls">
+                <button>PLAY</button>
+                <button>EDIT</button>
+                <button onClick={() => handleDeleteGame(game._id)}>
+                  DELETE
+                </button>
+              </div>
+            </li>
           );
         })}
       </ul>

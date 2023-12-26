@@ -7,21 +7,13 @@ import { Chessboard } from "react-chessboard";
 const GameplayBoard = () => {
   const { selectedGame, setGame } = useGame();
   const gameId = selectedGame._id;
+  console.log(selectedGame);
   const [chess, setChess] = useState(new Chess(selectedGame.fen));
   const currentUser = JSON.parse(
     localStorage.getItem("chessmixed_currentUser")
   );
 
   // console.log(currentUser);
-
-  // const [move, setMove] = useState({
-  //   from: "",
-  //   to: "",
-  // });
-  // function handleMoveInput(event) {
-  //   const { id, value } = event.target;
-  //   setMove((prevMove) => ({ ...prevMove, [id]: value }));
-  // }
 
   function isDraggablePiece({ piece }) {
     if (

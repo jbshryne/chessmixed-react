@@ -102,6 +102,19 @@ a {
   padding: 0px 50px;
 }
 
+.board-container {
+  outline: 4px ridge rgb(22, 20, 20);
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+  margin: 5px;
+  border-radius: 5%;
+  background-color: rgb(83, 69, 69);
+  max-width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .game-thumbnail {
   border: 1px solid black;
   margin: 10px 25px;
