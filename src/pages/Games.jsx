@@ -96,7 +96,6 @@ const Games = () => {
               <h4>Game {idx + 1}</h4>
               <div
                 className="board-container"
-                // to={}
                 onClick={() => handleGameSelection(game)}
               >
                 <Chessboard
@@ -104,16 +103,16 @@ const Games = () => {
                   position={game.fen}
                   boardWidth={250}
                   boardOrientation={
-                    game.playerBlack &&
-                    game.playerBlack.playerId === currentUser._id
-                      ? "black"
-                      : "white"
+                    game.playerWhite &&
+                    game.playerWhite.playerId === currentUser._id
+                      ? "white"
+                      : "black"
                   }
                   arePiecesDraggable={false}
                 />
               </div>
               <div className="controls">
-                <button>PLAY</button>
+                <button onClick={() => handleGameSelection(game)}>PLAY</button>
                 <button>EDIT</button>
                 <button onClick={() => handleDeleteGame(game._id)}>
                   DELETE

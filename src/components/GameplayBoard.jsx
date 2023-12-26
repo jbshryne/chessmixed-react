@@ -7,7 +7,7 @@ import { Chessboard } from "react-chessboard";
 const GameplayBoard = () => {
   const { selectedGame, setGame } = useGame();
   const gameId = selectedGame._id;
-  console.log(selectedGame);
+  // console.log(selectedGame);
   const [chess, setChess] = useState(new Chess(selectedGame.fen));
   const currentUser = JSON.parse(
     localStorage.getItem("chessmixed_currentUser")
@@ -30,8 +30,14 @@ const GameplayBoard = () => {
         return true;
       }
       return false;
-    } else {
-      return true;
+    } else if (
+      selectedGame.playerWhite.username === selectedGame.playerBlack.username
+    ) {
+      const currentTurn = selectedGame.currentTurn;
+      if (piece.includes(currentTurn)) {
+        return true;
+      }
+      return false;
     }
   }
 
@@ -53,7 +59,7 @@ const GameplayBoard = () => {
       result = newChess.move(move);
       console.log(result);
     } catch (error) {
-      // console.log(error);
+      console.log(error);
       return null;
     }
     // console.log(newChess.fen());
@@ -100,18 +106,18 @@ const GameplayBoard = () => {
     return result; // null if the move was illegal, the move object if the move was legal
   }
 
-  function handleReset() {
-    // setChess(new Chess());
-    console.log("reset");
-  }
+  // function handleReset() {
+  //   // setChess(new Chess());
+  //   console.log("reset");
+  // }
 
-  function onDrop(sourceSquare, targetSquare) {
-    // console.log(sourceSquare, targetSquare);
+  function onDrop(sourceSquare, targetSquare, piece) {
+    console.log(sourceSquare, targetSquare, piece);
 
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q", // always promote to a queen for example simplicity
+      promotion: piece[1].toLowerCase() ?? "q",
       local: true,
     });
 
@@ -140,17 +146,18 @@ const GameplayBoard = () => {
   });
 
   return (
-    <div>
+    <div className="board-container">
       <Chessboard
         position={chess.fen()}
         boardWidth={500}
-        onPieceDrop={onDrop}
         isDraggablePiece={isDraggablePiece}
+        onPieceDrop={onDrop}
+        // onPieceDragEnd={onDrop}
         boardOrientation={
-          selectedGame.playerBlack &&
-          selectedGame.playerBlack.playerId === currentUser._id
-            ? "black"
-            : "white"
+          selectedGame.playerWhite &&
+          selectedGame.playerWhite.playerId === currentUser._id
+            ? "white"
+            : "black"
         }
       />
       {/* <input
@@ -161,7 +168,7 @@ const GameplayBoard = () => {
       />
       <input type="text" id="to" placeholder="to" onChange={handleMoveInput} />
       <button onClick={() => makeAMove(move)}>Move</button> */}
-      <button onClick={handleReset}>Reset Board</button>
+      {/* <button onClick={handleReset}>Reset Board</button> */}
     </div>
   );
 };
