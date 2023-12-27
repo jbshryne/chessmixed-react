@@ -4,7 +4,7 @@ import { socket } from "../socket";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 
-const GameplayBoard = () => {
+const GameplayBoard = ({ setCurrentTurn, setStatus }) => {
   const { selectedGame, setGame } = useGame();
   const gameId = selectedGame._id;
   // console.log(selectedGame);
@@ -71,6 +71,7 @@ const GameplayBoard = () => {
     result.color === "w"
       ? (gameCopy.currentTurn = "b")
       : (gameCopy.currentTurn = "w");
+    setCurrentTurn(gameCopy.currentTurn);
 
     if (result.flags.includes("c")) {
       // capture
@@ -80,6 +81,14 @@ const GameplayBoard = () => {
       } else {
         gameCopy.capturedWhite.push(piece);
       }
+    }
+
+    // check
+    newChess.inCheck() ? setStatus(" is in check!") : setStatus(" to move");
+
+    // checkmate
+    if (newChess.isCheckmate()) {
+      setStatus(" is in checkmate!");
     }
 
     setGame(gameCopy);

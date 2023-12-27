@@ -1,36 +1,38 @@
-import React from "react";
-import { useGame } from "../store/game-context";
+// import React, { useState } from "react";
+// import { useGame } from "../store/game-context";
 
-const StatusBox = ({ player }) => {
-  const { selectedGame } = useGame();
-  const currentUser = JSON.parse(
-    localStorage.getItem("chessmixed_currentUser")
-  );
+const StatusBox = ({ children }) => {
+  // const [message, setMessage] = useState("");
+  // const { selectedGame } = useGame();
+  // const { playerWhite, playerBlack } = selectedGame;
+  // const currentUser = JSON.parse(
+  //   localStorage.getItem("chessmixed_currentUser")
+  // );
 
-  // console.log(selectedGame, player, currentUser);
+  // console.log(selectedGame, player);
+  // let playerName;
+  // let message = "";
 
-  const playerWhiteName = selectedGame.playerWhite
-    ? selectedGame.playerWhite.displayName
-    : "PlayerWhite";
-  const playerBlackName = selectedGame.playerBlack
-    ? selectedGame.playerBlack.displayName
-    : "PlayerBlack";
+  // if (
+  //   playerWhite.username === currentUser.username &&
+  //   playerBlack.username === currentUser.username
+  // ) {
+  //   player === "self" ? (playerName = "White") : (playerName = "Black");
+  // } else if (playerWhite.username !== playerBlack.username) {
+  //   if (player === "self") {
+  //     playerName =
+  //       currentUser.username === playerWhite.username
+  //         ? playerWhite.displayName
+  //         : playerBlack.displayName;
+  //   } else {
+  //     playerName =
+  //       currentUser.username === playerWhite.username
+  //         ? playerBlack.displayName
+  //         : playerWhite.displayName;
+  //   }
+  // }
 
-  let playerName;
-
-  if (player === "self") {
-    playerName =
-      currentUser.username === selectedGame.playerWhite.username
-        ? playerWhiteName
-        : playerBlackName;
-  } else {
-    playerName =
-      currentUser.username === selectedGame.playerWhite.username
-        ? playerBlackName
-        : playerWhiteName;
-  }
-
-  return <h2 className="status-box">{playerName}</h2>;
+  return <h2 className="status-box">{children}</h2>;
 };
 
 export default StatusBox;

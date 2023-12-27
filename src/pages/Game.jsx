@@ -1,50 +1,38 @@
-// import { useEffect } from "react";
-// import { useGame } from "../store/game-context";
-// import { useParams } from "react-router-dom";
-import GameplayBoard from "../components/GameplayBoard";
+import { useState } from "react";
+import { useGame } from "../store/game-context";
 import StatusBox from "../components/StatusBox";
-// import { socket } from "../socket";
+import GameplayBoard from "../components/GameplayBoard";
 
-const Game = () => {
-  // const { selectedGame } = useGame();
-  // const { setGame } = useGame();
-  // const { id } = useParams();
+function Game() {
+  const { selectedGame } = useGame();
+  const currentUser = JSON.parse(
+    localStorage.getItem("chessmixed_currentUser")
+  );
+  const opponent =
+    selectedGame.playerWhite.username === currentUser.username
+      ? selectedGame.playerBlack
+      : selectedGame.playerWhite;
 
-  // let selectedGame = {};
+  const [currentTurn, setCurrentTurn] = useState(selectedGame.currentTurn);
+  const [status, setStatus] = useState(" to move");
 
-  // useEffect(() => {
-  //   const currentUser = JSON.parse(
-  //     localStorage.getItem("chessmixed_currentUser")
-  //   );
+  const selfColor =
+    selectedGame.playerWhite.username === currentUser.username ? "w" : "b";
 
-  //   async function fetchGame() {
-  //     const response = await fetch("http://localhost:3200/games/" + id, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         currentUser,
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-  //     console.log(data);
-  //     setGame(data);
-  //     // selectedGame = data;
-  //   }
-  //   fetchGame();
-  // }, [setGame, id]);
-
-  // console.log(selectedGame);
+  const opponentColor =
+    selectedGame.playerWhite.username === currentUser.username ? "b" : "w";
 
   return (
     <div id="game-page">
-      <StatusBox player="opponent" />
-      <GameplayBoard />
-      <StatusBox player="self" />
+      <StatusBox>
+        {currentTurn === opponentColor && opponent.displayName + status}
+      </StatusBox>
+      <GameplayBoard setCurrentTurn={setCurrentTurn} setStatus={setStatus} />
+      <StatusBox>
+        {currentTurn === selfColor && currentUser.displayName + status}
+      </StatusBox>
     </div>
   );
-};
+}
 
 export default Game;
