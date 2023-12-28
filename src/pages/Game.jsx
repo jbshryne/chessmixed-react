@@ -82,7 +82,11 @@ function Game() {
           </StatusBox>
         </>
       ) : (
-        <>{fetchedGame && <EditBoard fetchedGame={fetchedGame} />}</>
+        <>
+          {fetchedGame && (
+            <EditBoard fetchedGame={fetchedGame} selfColor={selfColor} />
+          )}
+        </>
       )}
     </div>
   );
