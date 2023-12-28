@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
-import { useGame } from "../store/game-context";
+// import { useGame } from "../store/game-context";
 import { socket } from "../socket";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 
-const GameplayBoard = ({ setCurrentTurn, setStatus }) => {
-  const { selectedGame, setGame } = useGame();
-  const gameId = selectedGame._id;
-  // console.log(selectedGame);
-  const [chess, setChess] = useState(new Chess(selectedGame.fen));
+const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
+  // const { selected, setGame } = useGame();
+  const gameId = fetchedGame._id;
+  const [chess, setChess] = useState(new Chess(fetchedGame.fen));
   const currentUser = JSON.parse(
     localStorage.getItem("chessmixed_currentUser")
   );
@@ -16,13 +15,11 @@ const GameplayBoard = ({ setCurrentTurn, setStatus }) => {
   // console.log(currentUser);
 
   function isDraggablePiece({ piece }) {
-    if (
-      selectedGame.playerWhite.username !== selectedGame.playerBlack.username
-    ) {
-      const currentTurn = selectedGame.currentTurn;
+    if (fetchedGame.playerWhite.username !== fetchedGame.playerBlack.username) {
+      const currentTurn = fetchedGame.currentTurn;
       const playerColor =
-        selectedGame.playerBlack &&
-        selectedGame.playerBlack.playerId === currentUser._id
+        fetchedGame.playerBlack &&
+        fetchedGame.playerBlack.playerId === currentUser._id
           ? "b"
           : "w";
 
@@ -31,9 +28,9 @@ const GameplayBoard = ({ setCurrentTurn, setStatus }) => {
       }
       return false;
     } else if (
-      selectedGame.playerWhite.username === selectedGame.playerBlack.username
+      fetchedGame.playerWhite.username === fetchedGame.playerBlack.username
     ) {
-      const currentTurn = selectedGame.currentTurn;
+      const currentTurn = fetchedGame.currentTurn;
       if (piece.includes(currentTurn)) {
         return true;
       }
@@ -66,7 +63,7 @@ const GameplayBoard = ({ setCurrentTurn, setStatus }) => {
 
     setChess(newChess);
 
-    const gameCopy = selectedGame;
+    const gameCopy = fetchedGame;
     gameCopy.fen = newChess.fen();
     result.color === "w"
       ? (gameCopy.currentTurn = "b")
@@ -91,7 +88,7 @@ const GameplayBoard = ({ setCurrentTurn, setStatus }) => {
       setStatus(" is in checkmate!");
     }
 
-    setGame(gameCopy);
+    // setGame(gameCopy);
 
     if (move.local) {
       const response = await fetch(
@@ -163,8 +160,8 @@ const GameplayBoard = ({ setCurrentTurn, setStatus }) => {
         onPieceDrop={onDrop}
         // onPieceDragEnd={onDrop}
         boardOrientation={
-          selectedGame.playerWhite &&
-          selectedGame.playerWhite.playerId === currentUser._id
+          fetchedGame.playerWhite &&
+          fetchedGame.playerWhite.playerId === currentUser._id
             ? "white"
             : "black"
         }

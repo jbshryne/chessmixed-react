@@ -1,36 +1,89 @@
-import { useState } from "react";
-import { useGame } from "../store/game-context";
+import { useEffect, useState } from "react";
+// import { useGame } from "../store/game-context";
 import StatusBox from "../components/StatusBox";
 import GameplayBoard from "../components/GameplayBoard";
+import EditBoard from "../components/EditBoard";
 
 function Game() {
-  const { selectedGame } = useGame();
+  // const { selectedGame } = useGame();
+  const selectedGame = JSON.parse(
+    localStorage.getItem("chessmixed_selectedGame")
+  );
+
+  const [fetchedGame, setFetchedGame] = useState(null);
+  const [currentTurn, setCurrentTurn] = useState(null);
+  const [status, setStatus] = useState(" to move");
+  const [isPlayMode, setIsPlayMode] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(
+        `http://localhost:3200/games/${selectedGame._id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+      console.log(data);
+      setFetchedGame(data);
+    }
+
+    fetchData();
+  }, [selectedGame._id]);
+
   const currentUser = JSON.parse(
     localStorage.getItem("chessmixed_currentUser")
   );
-  const opponent =
-    selectedGame.playerWhite.username === currentUser.username
-      ? selectedGame.playerBlack
-      : selectedGame.playerWhite;
 
-  const [currentTurn, setCurrentTurn] = useState(selectedGame.currentTurn);
-  const [status, setStatus] = useState(" to move");
+  useEffect(() => {
+    if (fetchedGame) {
+      setCurrentTurn(fetchedGame.currentTurn);
+    }
+  }, [fetchedGame]);
+
+  if (!fetchedGame) {
+    return <div>Loading...</div>;
+  }
+
+  const opponent =
+    fetchedGame.playerWhite.username === currentUser.username
+      ? fetchedGame.playerBlack
+      : fetchedGame.playerWhite;
 
   const selfColor =
-    selectedGame.playerWhite.username === currentUser.username ? "w" : "b";
+    fetchedGame.playerWhite.username === currentUser.username ? "w" : "b";
 
   const opponentColor =
-    selectedGame.playerWhite.username === currentUser.username ? "b" : "w";
+    fetchedGame.playerWhite.username === currentUser.username ? "b" : "w";
 
   return (
     <div id="game-page">
-      <StatusBox>
-        {currentTurn === opponentColor && opponent.displayName + status}
-      </StatusBox>
-      <GameplayBoard setCurrentTurn={setCurrentTurn} setStatus={setStatus} />
-      <StatusBox>
-        {currentTurn === selfColor && currentUser.displayName + status}
-      </StatusBox>
+      <button onClick={() => setIsPlayMode(!isPlayMode)}>
+        Toggle Play Mode
+      </button>
+      {isPlayMode ? (
+        <>
+          <StatusBox>
+            {currentTurn === opponentColor && opponent.displayName + status}
+          </StatusBox>
+          {fetchedGame && (
+            <GameplayBoard
+              setCurrentTurn={setCurrentTurn}
+              setStatus={setStatus}
+              fetchedGame={fetchedGame}
+            />
+          )}
+          <StatusBox>
+            {currentTurn === selfColor && currentUser.displayName + status}
+          </StatusBox>
+        </>
+      ) : (
+        <>{fetchedGame && <EditBoard fetchedGame={fetchedGame} />}</>
+      )}
     </div>
   );
 }

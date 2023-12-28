@@ -34,15 +34,15 @@ const Lobby = () => {
     });
   }, []);
 
-  useEffect(() => {
-    // Join the "lobby" room when the page loads
-    socket.emit("login", currentUser);
+  // useEffect(() => {
+  //   // Join the "lobby" room when the page loads
+  //   socket.emit("login", currentUser);
 
-    // return () => {
-    //   // Leave the "lobby" room when the page unmounts
-    //   socket.emit("leaveLobby", currentUser);
-    // };
-  }, []);
+  //   // return () => {
+  //   //   // Leave the "lobby" room when the page unmounts
+  //   //   socket.emit("leaveLobby", currentUser);
+  //   // };
+  // }, []);
 
   return (
     <div

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGame } from "../store/game-context";
+// import { useGame } from "../store/game-context";
 import { socket } from "../socket";
 import { Chessboard } from "react-chessboard";
 
 const Games = () => {
   const [allGames, setAllGames] = useState([]);
-  const { setGame } = useGame();
+  // const { setGame } = useGame();
   const navigate = useNavigate();
 
   const currentUser = JSON.parse(
@@ -33,8 +33,12 @@ const Games = () => {
   const handleGameSelection = (selectedGame) => {
     console.log(selectedGame);
     socket.emit("joinRoom", `game-${selectedGame._id}`);
-    setGame(selectedGame);
-    navigate(`/game/${selectedGame._id}`);
+    // setGame(selectedGame);
+    localStorage.setItem(
+      "chessmixed_selectedGame",
+      JSON.stringify(selectedGame)
+    );
+    navigate(`/game`);
   };
 
   const handleSeedGames = async () => {

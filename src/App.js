@@ -1,7 +1,7 @@
 // App.js
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import AuthChecker from "./components/AuthChecker";
@@ -36,8 +36,6 @@ function App() {
     };
   }, []);
 
-  const [currentGame, setCurrentGame] = useState(null);
-
   return (
     <div>
       <Header />
@@ -57,15 +55,15 @@ function App() {
             path="/games"
             element={
               <AuthChecker targetUrl="/games">
-                <Games setCurrentGame={setCurrentGame} />
+                <Games />
               </AuthChecker>
             }
           />
           <Route
-            path="/game/:id"
+            path="/game/"
             element={
               <AuthChecker targetUrl="/game">
-                <Game currentGame={currentGame} />
+                <Game />
               </AuthChecker>
             }
           />
