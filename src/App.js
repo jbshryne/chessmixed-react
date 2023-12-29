@@ -1,16 +1,16 @@
 // App.js
+import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import { useEffect } from "react";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
-import AuthChecker from "./components/AuthChecker";
 import Lobby from "./pages/Lobby";
 import Games from "./pages/Games";
 import Game from "./pages/Game";
-import io from "socket.io-client";
-import { GameProvider } from "./store/game-context";
 import Header from "./components/Header";
+import AuthChecker from "./components/AuthChecker";
+import { GameProvider } from "./store/game-context";
+import io from "socket.io-client";
 // import { Chess } from "chess.js";
 
 const socket = io.connect("http://localhost:3200");

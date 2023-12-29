@@ -1,14 +1,26 @@
 import { useEffect, useState } from "react";
 // import { useGame } from "../store/game-context";
+import { useNavigate } from "react-router-dom";
+import { socket } from "../socket";
 import StatusBox from "../components/StatusBox";
 import GameplayBoard from "../components/GameplayBoard";
 import EditBoard from "../components/EditBoard";
 
 function Game() {
   // const { selectedGame } = useGame();
+  const navigate = useNavigate();
   const selectedGame = JSON.parse(
     localStorage.getItem("chessmixed_selectedGame")
   );
+
+  console.log(selectedGame);
+
+  useEffect(() => {
+    if (!selectedGame) {
+      console.log("No game selected");
+      navigate("/games");
+    }
+  });
 
   const [fetchedGame, setFetchedGame] = useState(null);
   const [currentTurn, setCurrentTurn] = useState(null);
@@ -16,24 +28,27 @@ function Game() {
   const [isPlayMode, setIsPlayMode] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      const response = await fetch(
-        `http://localhost:3200/games/${selectedGame._id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    if (selectedGame) {
+      async function fetchData() {
+        const response = await fetch(
+          `http://localhost:3200/games/${selectedGame._id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      const data = await response.json();
-      console.log(data);
-      setFetchedGame(data);
+        const data = await response.json();
+        console.log(data);
+        setFetchedGame(data);
+      }
+
+      fetchData();
+      socket.emit("joinRoom", `game-${selectedGame._id}`);
     }
-
-    fetchData();
-  }, [selectedGame._id]);
+  }, []);
 
   const currentUser = JSON.parse(
     localStorage.getItem("chessmixed_currentUser")
