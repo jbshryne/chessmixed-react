@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import { useGame } from "../store/game-context";
-import { socket } from "../socket";
+// import { socket } from "../socket";
 import { Chessboard } from "react-chessboard";
 
 const Games = () => {
@@ -32,7 +32,7 @@ const Games = () => {
 
   const handleGameSelection = (selectedGame) => {
     console.log(selectedGame);
-    socket.emit("joinRoom", `game-${selectedGame._id}`);
+    // socket.emit("joinRoom", `game-${selectedGame._id}`);
     // setGame(selectedGame);
     localStorage.setItem(
       "chessmixed_selectedGame",
