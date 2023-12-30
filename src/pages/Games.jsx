@@ -15,7 +15,7 @@ const Games = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch("http://localhost:3200/games", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/games`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ const Games = () => {
   };
 
   const handleSeedGames = async () => {
-    const response = await fetch("http://localhost:3200/games/seed", {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/seed`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -56,15 +56,18 @@ const Games = () => {
   };
 
   const handleCreateGame = async () => {
-    const response = await fetch("http://localhost:3200/games/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        currentUser,
-      }),
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/games/create`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentUser,
+        }),
+      }
+    );
 
     const data = await response.json();
     console.log(data);
@@ -86,17 +89,20 @@ const Games = () => {
   };
 
   const handleDeleteGame = async (gameId) => {
-    const response = await fetch("http://localhost:3200/games/delete", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/games/delete`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gameId,
+          // currentUser,
+        }),
         gameId,
-        // currentUser,
-      }),
-      gameId,
-    });
+      }
+    );
 
     const data = await response.json();
     console.log(data);
