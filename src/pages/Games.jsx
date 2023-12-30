@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { useGame } from "../store/game-context";
+import { useGame } from "../store/game-context";
 // import { socket } from "../socket";
 import { Chessboard } from "react-chessboard";
 
 const Games = () => {
   const [allGames, setAllGames] = useState([]);
-  // const { setGame } = useGame();
+  const { setGameMode } = useGame();
   const navigate = useNavigate();
 
   const currentUser = JSON.parse(
@@ -32,12 +32,11 @@ const Games = () => {
 
   const handleGameSelection = (selectedGame) => {
     console.log(selectedGame);
-    // socket.emit("joinRoom", `game-${selectedGame._id}`);
-    // setGame(selectedGame);
     localStorage.setItem(
       "chessmixed_selectedGame",
       JSON.stringify(selectedGame)
     );
+    setGameMode("play");
     navigate(`/game`);
   };
 
@@ -76,6 +75,16 @@ const Games = () => {
     }
   };
 
+  const handleEditGame = (gameId) => {
+    const selectedGame = allGames.find((game) => game._id === gameId);
+    localStorage.setItem(
+      "chessmixed_selectedGame",
+      JSON.stringify(selectedGame)
+    );
+    setGameMode("edit");
+    navigate(`/game`);
+  };
+
   const handleDeleteGame = async (gameId) => {
     const response = await fetch("http://localhost:3200/games/delete", {
       method: "DELETE",
@@ -105,9 +114,19 @@ const Games = () => {
 
       <ul id="games-container">
         {allGames.map((game, idx) => {
+          let opponentName;
+          if (game.playerWhite.playerId === game.playerBlack.playerId) {
+            opponentName = "none";
+          } else if (game.playerWhite.playerId === currentUser._id) {
+            opponentName = game.playerBlack.displayName;
+          } else {
+            opponentName = game.playerWhite.displayName;
+          }
+
           return (
             <li className="game-container" key={game._id}>
-              <h4>Game {idx + 1}</h4>
+              {/* <h4>Game {idx + 1}</h4> */}
+              <h3>Opponent: {opponentName}</h3>
               <div
                 className="board-container"
                 onClick={() => handleGameSelection(game)}
@@ -127,7 +146,7 @@ const Games = () => {
               </div>
               <div className="controls">
                 <button onClick={() => handleGameSelection(game)}>PLAY</button>
-                <button>EDIT</button>
+                <button onClick={() => handleEditGame(game._id)}>EDIT</button>
                 <button onClick={() => handleDeleteGame(game._id)}>
                   DELETE
                 </button>

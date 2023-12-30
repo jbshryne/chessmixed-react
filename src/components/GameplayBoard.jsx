@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 // import { useGame } from "../store/game-context";
 import { socket } from "../socket";
 import { Chess } from "chess.js";
-import { Chessboard } from "react-chessboard";
+// import { Chessboard } from "react-chessboard";
+import Chessboard from "chessboardjsx";
 
 const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
   // const { selected, setGame } = useGame();
@@ -38,18 +39,8 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
     }
   }
 
-  // async function recieveNewMove(move) {
-  //   const result = makeAMove(move);
-
-  //   if (result === null) {
-  //     alert("Illegal move");
-  //     return;
-  //   }
-
-  // }
-
   async function makeAMove(move) {
-    const newChess = new Chess(chess.fen());
+    let newChess = new Chess(chess.fen());
     let result;
 
     try {
@@ -60,6 +51,20 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
       return null;
     }
     // console.log(newChess.fen());
+
+    // promotion
+
+    if (result.flags.includes("p")) {
+      const promotion = prompt("Promote to: (q, r, b, n)");
+      newChess = new Chess(chess.fen());
+      try {
+        result = newChess.move({ ...move, promotion });
+        console.log(result);
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    }
 
     setChess(newChess);
 
@@ -112,18 +117,13 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
     return result; // null if the move was illegal, the move object if the move was legal
   }
 
-  // function handleReset() {
-  //   // setChess(new Chess());
-  //   console.log("reset");
-  // }
-
-  function onDrop(sourceSquare, targetSquare, piece) {
+  function onDrop({ sourceSquare, targetSquare, piece }) {
     console.log(sourceSquare, targetSquare, piece);
 
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
-      promotion: piece[1].toLowerCase() ?? "q",
+      promotion: "q",
       local: true,
     });
 
@@ -153,28 +153,32 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
 
   return (
     <div className="board-container">
-      <Chessboard
+      {/* from react-chessboard: */}
+      {/* <Chessboard
         position={chess.fen()}
         boardWidth={500}
         isDraggablePiece={isDraggablePiece}
         onPieceDrop={onDrop}
-        // onPieceDragEnd={onDrop}
         boardOrientation={
           fetchedGame.playerWhite &&
           fetchedGame.playerWhite.playerId === currentUser._id
             ? "white"
             : "black"
         }
+      /> */}
+      {/* from chessboardjsx: */}
+      <Chessboard
+        position={chess.fen()}
+        width={500}
+        allowDrag={isDraggablePiece}
+        onDrop={onDrop}
+        orientation={
+          fetchedGame.playerWhite &&
+          fetchedGame.playerWhite.playerId === currentUser._id
+            ? "white"
+            : "black"
+        }
       />
-      {/* <input
-        type="text"
-        id="from"
-        placeholder="from"
-        onChange={handleMoveInput}
-      />
-      <input type="text" id="to" placeholder="to" onChange={handleMoveInput} />
-      <button onClick={() => makeAMove(move)}>Move</button> */}
-      {/* <button onClick={handleReset}>Reset Board</button> */}
     </div>
   );
 };

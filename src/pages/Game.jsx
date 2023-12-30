@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// import { useGame } from "../store/game-context";
+import { useGame } from "../store/game-context";
 import { useNavigate, Link } from "react-router-dom";
 import { socket } from "../socket";
 import StatusBox from "../components/StatusBox";
@@ -7,13 +7,11 @@ import GameplayBoard from "../components/GameplayBoard";
 import EditBoard from "../components/EditBoard";
 
 function Game() {
-  // const { selectedGame } = useGame();
+  const { gameMode, setGameMode } = useGame();
   const navigate = useNavigate();
   const selectedGame = JSON.parse(
     localStorage.getItem("chessmixed_selectedGame")
   );
-
-  // console.log(selectedGame);
 
   useEffect(() => {
     if (!selectedGame) {
@@ -26,7 +24,6 @@ function Game() {
   const [currentTurn, setCurrentTurn] = useState(null);
   const [editedCurrentTurn, setEditedCurrentTurn] = useState(null); // ["w", "b"
   const [status, setStatus] = useState(" to move");
-  const [isPlayMode, setIsPlayMode] = useState(true);
   const [position, setPosition] = useState(null);
   // const [editedPosition, setEditedPosition] = useState(null);
   const currentUser = JSON.parse(
@@ -81,6 +78,18 @@ function Game() {
   const opponentColor =
     fetchedGame.playerWhite.username === currentUser.username ? "b" : "w";
 
+  const handleEditMode = () => {
+    setPosition(fetchedGame.fen.split(" ")[0]);
+    setEditedCurrentTurn(currentTurn);
+    setGameMode("edit");
+  };
+
+  const handleDiscard = () => {
+    setGameMode("play");
+    setPosition(fetchedGame.fen);
+    setEditedCurrentTurn(null);
+  };
+
   const handleReset = async () => {
     console.log("reset");
     setPosition("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
@@ -111,14 +120,14 @@ function Game() {
     const data = await response.json();
     console.log(data);
     setFetchedGame(data);
-    setIsPlayMode(true);
+    setGameMode("play");
     setPosition(newFen);
     setCurrentTurn(editedCurrentTurn);
   };
 
   return (
     <div id="game-page">
-      {isPlayMode ? (
+      {gameMode === "play" && (
         <>
           <StatusBox>
             {currentTurn === opponentColor && opponent.displayName + status}
@@ -137,28 +146,20 @@ function Game() {
             <Link to="/games">
               <button>Back to Games</button>
             </Link>
-            <button
-              onClick={() => {
-                setIsPlayMode(false);
-                setPosition(fetchedGame.fen.split(" ")[0]);
-                setEditedCurrentTurn(currentTurn);
-              }}
-            >
-              Edit Boardstate
-            </button>
+            <button onClick={handleEditMode}>Edit Boardstate</button>
           </div>
         </>
-      ) : (
+      )}
+      {gameMode === "edit" && (
         <>
           {fetchedGame && (
             <>
               <div className="controls">
-                <label htmlFor="blacktoMove">
+                <label htmlFor="blackToMove">
                   Black to move
                   <input
                     type="radio"
                     id="blackToMove"
-                    className="currentTurn"
                     value="b"
                     checked={editedCurrentTurn === "b"}
                     onChange={() => setEditedCurrentTurn("b")}
@@ -168,8 +169,6 @@ function Game() {
               <EditBoard
                 fetchedGame={fetchedGame}
                 selfColor={selfColor}
-                // editedPosition={editedPosition}
-                // setEditedPosition={setEditedPosition}
                 position={position}
                 setPosition={setPosition}
               />
@@ -179,7 +178,6 @@ function Game() {
                   <input
                     type="radio"
                     id="whiteToMove"
-                    className="currentTurn"
                     value="w"
                     checked={editedCurrentTurn === "w"}
                     onChange={() => setEditedCurrentTurn("w")}
@@ -192,14 +190,7 @@ function Game() {
             <Link to="/games">
               <button>Back to Games</button>
             </Link>
-            <button
-              onClick={() => {
-                setIsPlayMode(true);
-                setPosition(fetchedGame.fen);
-              }}
-            >
-              Discard Changes
-            </button>
+            <button onClick={handleDiscard}>Discard Changes</button>
             <button onClick={handleReset}>Start Position</button>
             <button onClick={handleSave}>Save and Continue</button>
           </div>
