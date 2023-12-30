@@ -1,8 +1,7 @@
 // App.js
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Lobby from "./pages/Lobby";
 import Games from "./pages/Games";
@@ -36,13 +35,29 @@ function App() {
     };
   }, []);
 
+  const currentUser = JSON.parse(
+    localStorage.getItem("chessmixed_currentUser")
+  );
+
+  const [isLoggedIn, setIsLoggedIn] = useState(currentUser ? true : false);
+
   return (
     <div>
-      <Header />
+      <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
       <GameProvider>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Auth />} />
+          <Route
+            path="/"
+            element={
+              <Auth isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <Auth isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+            }
+          />
           <Route
             path="/lobby"
             element={

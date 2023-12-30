@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const Login = ({ setCurrentUser }) => {
+const Login = ({ handleLogin }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -19,24 +21,14 @@ const Login = ({ setCurrentUser }) => {
 
     const data = await response.json();
     console.log(data);
-    localStorage.setItem("chessmixed_currentUser", JSON.stringify(data));
+    if (data.user) {
+      localStorage.setItem("chessmixed_currentUser", JSON.stringify(data.user));
+      handleLogin();
+      navigate("/games");
+    } else {
+      alert(data.message);
+    }
   };
-
-  //   useEffect(() => {
-  //     async function fetchData() {
-  //       const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         // body: JSON.stringify(formData),
-  //       });
-
-  //       const data = await response.json();
-  //       console.log(data);
-  //     }
-  //     fetchData();
-  //   }, []);
 
   return (
     <div>

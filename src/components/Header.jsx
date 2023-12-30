@@ -1,7 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ isLoggedIn, setIsLoggedIn }) => {
+  const handleLogout = () => {
+    localStorage.removeItem("chessmixed_currentUser");
+    localStorage.removeItem("chessmixed_selectedGame");
+    setIsLoggedIn(false);
+    window.location.reload();
+  };
+
   return (
     <div id="navbar">
       <Link to="/">
@@ -16,11 +23,14 @@ const Header = () => {
       <Link to="/games">
         <button>My Games</button>
       </Link>
-      <Link to="/login">
-        <button>Login</button>
-      </Link>
+      {!isLoggedIn ? (
+        <Link to="/login">
+          <button>Login</button>
+        </Link>
+      ) : (
+        <button onClick={handleLogout}>Logout</button>
+      )}
     </div>
-    // <div className="header">Header</div>
   );
 };
 
