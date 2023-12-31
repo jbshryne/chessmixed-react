@@ -97,7 +97,7 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
 
     if (move.local) {
       const response = await fetch(
-        `http://localhost:3200/games/${gameId}/move`,
+        `${process.env.REACT_APP_API_URL}/games/${gameId}/move`,
         {
           method: "PUT",
           headers: {
