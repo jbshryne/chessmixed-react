@@ -9,7 +9,7 @@ import Game from "./pages/Game";
 import Header from "./components/Header";
 import AuthChecker from "./components/AuthChecker";
 import { GameProvider } from "./store/game-context";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 // import { Chess } from "chess.js";
 
 const socket = io.connect(process.env.REACT_APP_API_URL);
