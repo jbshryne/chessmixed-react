@@ -100,7 +100,7 @@ function Game() {
     console.log("save");
     const newFen = position + " " + editedCurrentTurn + " KQkq - 0 1";
     const response = await fetch(
-      `http://localhost:3200/games/${selectedGame._id}`,
+      `${process.env.REACT_APP_API_URL}/games/${selectedGame._id}`,
       {
         method: "PUT",
         headers: {
