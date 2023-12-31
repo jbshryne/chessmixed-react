@@ -37,7 +37,7 @@ function Game() {
     if (selectedGame) {
       async function fetchData() {
         const response = await fetch(
-          `${REACT_APP_API_URL}/games/${selectedGame._id}`,
+          `${process.env.REACT_APP_API_URL}/games/${selectedGame._id}`,
           {
             method: "GET",
             headers: {
