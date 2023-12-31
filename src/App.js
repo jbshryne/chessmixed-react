@@ -12,7 +12,7 @@ import { GameProvider } from "./store/game-context";
 import io from "socket.io-client";
 // import { Chess } from "chess.js";
 
-const socket = io.connect("http://localhost:3200");
+const socket = io.connect(REACT_APP_API_URL);
 
 function App() {
   useEffect(() => {

@@ -37,7 +37,7 @@ function Game() {
     if (selectedGame) {
       async function fetchData() {
         const response = await fetch(
-          `http://localhost:3200/games/${selectedGame._id}`,
+          `${REACT_APP_API_URL}/games/${selectedGame._id}`,
           {
             method: "GET",
             headers: {
