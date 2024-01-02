@@ -56,7 +56,7 @@ const EditBoard = ({
         getPosition={(position) => {
           console.log(position);
         }}
-        width={500}
+        width={480}
         // allowDrag={true}
         sparePieces={true}
         onDrop={onDrop}

@@ -43,6 +43,7 @@ const Auth = ({ isLoggedIn, setIsLoggedIn }) => {
 
   return (
     <div id="auth-page">
+      <h1>CHESSMIXED</h1>
       <section style={{ display: "flex" }}>
         <button onClick={handleTest}>Test API Connection</button>
         <p className="status-box">{isConnected}</p>
@@ -75,7 +76,7 @@ const Auth = ({ isLoggedIn, setIsLoggedIn }) => {
       <img
         src="art/chess-hero2.png"
         alt="art of two opposing castles over grided landscape"
-        style={{ width: "640px" }}
+        style={{ width: "600px" }}
       />
     </div>
   );

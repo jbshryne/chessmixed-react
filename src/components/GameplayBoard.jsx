@@ -169,7 +169,7 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
       {/* from chessboardjsx: */}
       <Chessboard
         position={chess.fen()}
-        width={500}
+        width={480}
         allowDrag={isDraggablePiece}
         onDrop={onDrop}
         orientation={
