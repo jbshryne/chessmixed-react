@@ -10,12 +10,12 @@ const Auth = ({ isLoggedIn, setIsLoggedIn }) => {
 
   console.log(currentUser);
 
-  const [testShown, setTestShown] = useState(false);
-  const [isConnected, setIsConnected] = useState("Waiting...");
+  // const [testShown, setTestShown] = useState(false);
+  const [isConnected, setIsConnected] = useState("");
   const [component, setComponent] = useState(null);
 
   const handleTest = async () => {
-    setTestShown(true);
+    setIsConnected("waiting...");
 
     const response = await fetch(`${process.env.REACT_APP_API_URL}/hi`, {
       method: "GET",
@@ -42,11 +42,14 @@ const Auth = ({ isLoggedIn, setIsLoggedIn }) => {
   };
 
   return (
-    <>
-      <button onClick={handleTest}>Test API Connection</button>
-      {testShown ? <p>{isConnected}</p> : null}
+    <div id="auth-page">
+      <section style={{ display: "flex" }}>
+        <button onClick={handleTest}>Test API Connection</button>
+        <p className="status-box">{isConnected}</p>
+      </section>
       {!isLoggedIn ? (
-        <div>
+        <div className="controls">
+          <section style={{ display: "flex", flexDirection: "row" }}></section>
           <button
             onClick={() =>
               handleComponentChange(<Login handleLogin={handleLogin} />)
@@ -69,7 +72,12 @@ const Auth = ({ isLoggedIn, setIsLoggedIn }) => {
           </p>
         </div>
       )}
-    </>
+      <img
+        src="art/chess-hero2.png"
+        alt="art of two opposing castles over grided landscape"
+        style={{ width: "640px" }}
+      />
+    </div>
   );
 };
 

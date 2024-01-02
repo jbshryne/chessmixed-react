@@ -45,7 +45,7 @@ const Signup = () => {
 
   return (
     <div>
-      <h1>Signup</h1>
+      {/* <h1>Signup</h1> */}
       <form onSubmit={handleSubmit}>
         <label>
           Display Name:
@@ -67,7 +67,7 @@ const Signup = () => {
             onChange={handleFormData}
           />
         </label>
-        <input type="submit" value="Submit" />
+        <input className="button" type="submit" value="Submit" />
       </form>
     </div>
   );
