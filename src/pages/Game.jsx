@@ -78,6 +78,14 @@ function Game() {
   const opponentColor =
     fetchedGame.playerWhite.username === currentUser.username ? "b" : "w";
 
+  let selfName = currentUser.displayName;
+  let opponentName = opponent.displayName;
+
+  if (selfName === opponentName) {
+    selfName = selfColor === "w" ? "White" : "Black";
+    opponentName = opponentColor === "w" ? "White" : "Black";
+  }
+
   const handleEditMode = () => {
     setPosition(fetchedGame.fen.split(" ")[0]);
     setEditedCurrentTurn(currentTurn);
@@ -130,7 +138,7 @@ function Game() {
       {gameMode === "play" && (
         <>
           <StatusBox>
-            {currentTurn === opponentColor && opponent.displayName + status}
+            {currentTurn === opponentColor && opponentName + status}
           </StatusBox>
           {fetchedGame && (
             <GameplayBoard
@@ -140,7 +148,7 @@ function Game() {
             />
           )}
           <StatusBox>
-            {currentTurn === selfColor && currentUser.displayName + status}
+            {currentTurn === selfColor && selfName + status}
           </StatusBox>
           <div className="controls">
             <Link to="/games">
