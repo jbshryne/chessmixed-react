@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useGame } from "../store/game-context";
 // import { socket } from "../socket";
 import { Chessboard } from "react-chessboard";
@@ -55,28 +55,28 @@ const Games = () => {
     console.log(data);
   };
 
-  const handleCreateGame = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_API_URL}/games/create`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          currentUser,
-        }),
-      }
-    );
+  // const handleCreateGame = async () => {
+  //   const response = await fetch(
+  //     `${process.env.REACT_APP_API_URL}/games/create`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         currentUser,
+  //       }),
+  //     }
+  //   );
 
-    const data = await response.json();
-    console.log(data);
+  //   const data = await response.json();
+  //   console.log(data);
 
-    if (data.success) {
-      const updatedGames = [...allGames, data.game];
-      setAllGames(updatedGames);
-    }
-  };
+  //   if (data.success) {
+  //     const updatedGames = [...allGames, data.game];
+  //     setAllGames(updatedGames);
+  //   }
+  // };
 
   const handleEditGame = (gameId) => {
     const selectedGame = allGames.find((game) => game._id === gameId);
@@ -100,7 +100,7 @@ const Games = () => {
           gameId,
           // currentUser,
         }),
-        gameId,
+        // gameId,
       }
     );
 
@@ -108,15 +108,18 @@ const Games = () => {
     console.log(data);
 
     if (data.success) {
-      const updatedGames = allGames.filter((game) => game._id !== gameId);
-      setAllGames(updatedGames);
+      window.location.reload();
+      //   const updatedGames = allGames.filter((game) => game._id !== gameId);
+      //   setAllGames(updatedGames);
     }
   };
 
   return (
     <div id="games-page">
       <h1>{currentUser.displayName}'s Games</h1>
-      <button onClick={handleCreateGame}>create new game</button>
+      <Link to="/new">
+        <button>new game</button>
+      </Link>
 
       <ul id="games-container">
         {allGames.map((game, idx) => {
@@ -140,7 +143,7 @@ const Games = () => {
                 <Chessboard
                   className="game-thumbnail"
                   position={game.fen}
-                  boardWidth={250}
+                  boardWidth={240}
                   boardOrientation={
                     game.playerWhite &&
                     game.playerWhite.playerId === currentUser._id
@@ -161,7 +164,9 @@ const Games = () => {
           );
         })}
       </ul>
-      <button onClick={handleSeedGames}>Seed Games</button>
+      <div className="controls">
+        <button onClick={handleSeedGames}>Seed Games</button>
+      </div>
     </div>
   );
 };

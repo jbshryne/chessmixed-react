@@ -10,6 +10,7 @@ import Header from "./components/Header";
 import AuthChecker from "./components/AuthChecker";
 import { GameProvider } from "./store/game-context";
 import { io } from "socket.io-client";
+import NewGame from "./pages/NewGame";
 // import { Chess } from "chess.js";
 
 const socket = io.connect(process.env.REACT_APP_API_URL);
@@ -79,6 +80,14 @@ function App() {
             element={
               <AuthChecker targetUrl="/game">
                 <Game />
+              </AuthChecker>
+            }
+          />
+          <Route
+            path="/new"
+            element={
+              <AuthChecker targetUrl="/new">
+                <NewGame />
               </AuthChecker>
             }
           />
