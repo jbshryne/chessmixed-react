@@ -93,7 +93,8 @@ label {
 }
 
 #games-page,
-#game-page {
+#game-page,
+#new-game-page {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -102,15 +103,12 @@ label {
 }
 
 #games-container {
-  /* padding-inline-start: 64px;
-  padding-inline-end: 64px; */
   display: flex;
   justify-content: center;
   list-style: none;
   border: 1px solid black;
   background-color: rgb(197, 182, 161, 0.1);
-  min-height: 475px;
-  width: 80vw;
+  width: 90vw;
   overflow-y: auto;
 }
 
@@ -119,11 +117,11 @@ label {
   flex-direction: column;
   align-items: center;
   outline: auto 5px;
-  height: 425px;
+  height: 350px;
   background-color: rgba(76, 62, 62, 0.8);
   border-radius: 2%;
   margin: 20px;
-  padding: 0px 50px;
+  /* padding: 0px 50px; */
 }
 
 .board-container {

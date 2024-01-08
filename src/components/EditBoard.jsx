@@ -1,42 +1,80 @@
 // import { useState } from "react";
 // import { Chessboard } from "react-chessboard";
 import Chessboard from "chessboardjsx";
-import FENBoard from "fen-chess-board";
+// import Chess from "chess.js";
+// import FENBoard from "fen-chess-board";
 
-const EditBoard = ({
-  selfColor,
-  //   editedPosition,
-  //   setEditedPosition,
-  position,
-  setPosition,
-}) => {
+const convertToFen = (position) => {
+  let fen = "";
+  let emptyCount = 0;
+  for (let i = 8; i >= 1; i--) {
+    for (let j = 1; j <= 8; j++) {
+      const square = String.fromCharCode(96 + j) + i;
+
+      if (position[square]) {
+        let piece;
+        if (position[square][0] === "w") {
+          piece = position[square][1].toUpperCase();
+        } else if (position[square][0] === "b") {
+          piece = position[square][1].toLowerCase();
+        } else {
+          piece = position[square];
+        }
+
+        if (emptyCount > 0) {
+          fen += emptyCount;
+          emptyCount = 0;
+        }
+
+        fen += piece;
+      } else {
+        emptyCount++;
+      }
+    }
+    if (emptyCount > 0) {
+      fen += emptyCount;
+      emptyCount = 0;
+    }
+    if (i > 1) {
+      fen += "/";
+    }
+  }
+  // console.log("converted fen:", fen);
+  return fen;
+};
+
+const EditBoard = ({ selfColor, position, setPosition, boardWidth = 480 }) => {
   //   let fenBoard = new FENBoard(selectedGame.fen);
   //   const [position, setPosition] = useState(fetchedGame.fen);
   //   console.log(fenBoard);
 
   console.log(position);
 
-  //   const startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+  // const onDrop = ({ sourceSquare, targetSquare, piece }) => {
+  //   console.log(sourceSquare, targetSquare, piece);
 
-  const onDrop = ({ sourceSquare, targetSquare, piece }) => {
-    console.log(sourceSquare, targetSquare, piece);
-    let fenBoard = new FENBoard(position);
-    if (sourceSquare === "spare") {
-      let newPiece;
-      if (piece[0] === "w") {
-        newPiece = piece[1].toUpperCase();
-      } else if (piece[0] === "b") {
-        newPiece = piece[1].toLowerCase();
-      }
-      fenBoard.put(targetSquare, newPiece);
-    } else {
-      fenBoard.move(sourceSquare, targetSquare);
-    }
-    setPosition(fenBoard.fen);
-    // setEditedPosition(fenBoard.fen);
+  //   let fenBoard = new FENBoard(position);
+  //   if (sourceSquare === "spare") {
+  //     let newPiece;
+  //     if (piece[0] === "w") {
+  //       newPiece = piece[1].toUpperCase();
+  //     } else if (piece[0] === "b") {
+  //       newPiece = piece[1].toLowerCase();
+  //     }
+  //     fenBoard.put(targetSquare, newPiece);
+  //   } else {
+  //     fenBoard.move(sourceSquare, targetSquare);
+  //   }
+  //   setPosition(fenBoard.fen);
+  // };
+
+  const getPosition = (position) => {
+    const fen = convertToFen(position);
+    console.log(fen);
+    // const fenBoard = new FENBoard(fen);
+    // console.log(fenBoard);
+    setPosition(fen);
   };
-
-  //   console.log(selectedGame);
 
   return (
     <div className="board-container">
@@ -52,15 +90,16 @@ const EditBoard = ({
       {/* from chessboardjsx: */}
       <Chessboard
         position={position}
-        // transitionDuration={0}
-        getPosition={(position) => {
-          console.log(position);
-        }}
-        width={480}
-        // allowDrag={true}
-        sparePieces={true}
-        onDrop={onDrop}
         orientation={selfColor === "w" ? "white" : "black"}
+        getPosition={(position) => {
+          getPosition(position);
+        }}
+        width={boardWidth}
+        sparePieces={true}
+        dropOffBoard="trash"
+        // allowDrag={true}
+        // transitionDuration={0}
+        // onDrop={onDrop}
       />
     </div>
   );

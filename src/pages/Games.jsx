@@ -98,9 +98,7 @@ const Games = () => {
         },
         body: JSON.stringify({
           gameId,
-          // currentUser,
         }),
-        // gameId,
       }
     );
 
@@ -143,7 +141,7 @@ const Games = () => {
                 <Chessboard
                   className="game-thumbnail"
                   position={game.fen}
-                  boardWidth={240}
+                  boardWidth={160}
                   boardOrientation={
                     game.playerWhite &&
                     game.playerWhite.playerId === currentUser._id
