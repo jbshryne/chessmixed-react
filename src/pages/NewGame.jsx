@@ -11,6 +11,7 @@ const NewGame = () => {
   const [friends, setFriends] = useState([]);
   const [currentTurn, setCurrentTurn] = useState("w");
   const [selfColor, setSelfColor] = useState("w");
+  const [boardOrientation, setBoardOrientation] = useState("white");
   const [opponentId, setOpponentId] = useState(currentUser._id);
 
   useEffect(() => {
@@ -60,13 +61,18 @@ const NewGame = () => {
         "chessmixed_selectedGame",
         JSON.stringify(data.game)
       );
-      //   setGameMode("play");
       navigate(`/game`);
     }
   };
 
   const handleOpponentChange = (event) => {
     setOpponentId(event.target.value);
+  };
+
+  const handleColorChange = (event) => {
+    console.log(event.target.value);
+    setSelfColor(event.target.value);
+    setBoardOrientation(event.target.value === "w" ? "white" : "black");
   };
 
   return (
@@ -80,7 +86,7 @@ const NewGame = () => {
           id="self-color"
           value="w"
           checked={selfColor === "w"}
-          onChange={() => setSelfColor("w")}
+          onChange={handleColorChange}
         />
         White
         <input
@@ -89,7 +95,7 @@ const NewGame = () => {
           id="self-color"
           value="b"
           checked={selfColor === "b"}
-          onChange={() => setSelfColor("b")}
+          onChange={handleColorChange}
         />
         Black
       </label>
@@ -135,6 +141,7 @@ const NewGame = () => {
         position={position}
         setPosition={setPosition}
         boardWidth={400}
+        orientation={boardOrientation}
       ></EditBoard>
       <button onClick={handleCreateGame}>Create Game</button>
     </div>

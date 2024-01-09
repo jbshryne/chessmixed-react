@@ -37,7 +37,9 @@ const Signup = () => {
     const data = await response.json();
 
     if (response.ok) {
-      console.log(data);
+      // redirect to login page
+      alert(data.message);
+      window.location.href = "/login";
     } else {
       alert(data.message);
     }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useGame } from "../store/game-context";
-// import { socket } from "../socket";
 import { Chessboard } from "react-chessboard";
 
 const Games = () => {
@@ -40,20 +39,20 @@ const Games = () => {
     navigate(`/game`);
   };
 
-  const handleSeedGames = async () => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/seed`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        currentUser,
-      }),
-    });
+  // const handleSeedGames = async () => {
+  //   const response = await fetch(`${process.env.REACT_APP_API_URL}/seed`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       currentUser,
+  //     }),
+  //   });
 
-    const data = await response.json();
-    console.log(data);
-  };
+  //   const data = await response.json();
+  //   console.log(data);
+  // };
 
   // const handleCreateGame = async () => {
   //   const response = await fetch(
@@ -141,7 +140,7 @@ const Games = () => {
                 <Chessboard
                   className="game-thumbnail"
                   position={game.fen}
-                  boardWidth={160}
+                  boardWidth={180}
                   boardOrientation={
                     game.playerWhite &&
                     game.playerWhite.playerId === currentUser._id
@@ -162,9 +161,9 @@ const Games = () => {
           );
         })}
       </ul>
-      <div className="controls">
+      {/* <div className="controls">
         <button onClick={handleSeedGames}>Seed Games</button>
-      </div>
+      </div> */}
     </div>
   );
 };
