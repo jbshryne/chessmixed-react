@@ -44,7 +44,7 @@ const EditBoard = ({
   position,
   setPosition,
   boardWidth = 480,
-  orientation = selfColor === "w" ? "white" : "black",
+  orientation,
 }) => {
   // console.log(position);
 
