@@ -11,7 +11,6 @@ import AuthChecker from "./components/AuthChecker";
 import { GameProvider } from "./store/game-context";
 import { io } from "socket.io-client";
 import NewGame from "./pages/NewGame";
-// import { Chess } from "chess.js";
 
 const socket = io.connect(process.env.REACT_APP_API_URL);
 

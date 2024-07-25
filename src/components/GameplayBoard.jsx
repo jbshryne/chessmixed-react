@@ -39,8 +39,48 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
     }
   }
 
-  async function makeAMove(move) {
-    let newChess = new Chess(chess.fen());
+  let gptApiCallCounter = 0;
+
+  async function requestOpponentMove(newChess, gameCopy) {
+    gptApiCallCounter++;
+
+    console.log("fen on call #", gptApiCallCounter, ":", newChess.fen());
+
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/games/${gameId}/move`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gameId,
+          fen: newChess.fen(),
+          currentTurn: gameCopy.currentTurn,
+          pgn: newChess.pgn(),
+          validMoves: newChess.moves({ verbose: true }),
+          opponent: "cpu",
+        }),
+      }
+    ).catch((error) => console.error(error));
+
+    const data = await response.json();
+    console.log(data);
+
+    makeAMove(
+      {
+        from: data.from,
+        to: data.to,
+        promotion: "q",
+      },
+      newChess
+    );
+  }
+
+  async function makeAMove(move, newChess) {
+    console.log("makeAMove received:", move);
+    console.log("current turn:", chess.turn());
+    if (newChess === undefined) newChess = new Chess(chess.fen());
     let result;
 
     try {
@@ -48,6 +88,9 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
       console.log(result);
     } catch (error) {
       console.log(error);
+      if (move.local === undefined) {
+        requestOpponentMove(newChess, fetchedGame);
+      }
       return null;
     }
     // console.log(newChess.fen());
@@ -95,23 +138,13 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
 
     // setGame(gameCopy);
 
-    if (move.local) {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/games/${gameId}/move`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            gameId,
-            fen: newChess.fen(),
-            currentTurn: gameCopy.currentTurn,
-          }),
-        }
-      );
-      const data = await response.json();
-      console.log(data);
+    if (move.local && gptApiCallCounter < 3) {
+      requestOpponentMove(newChess, gameCopy);
+    }
+
+    if (gptApiCallCounter >= 3) {
+      console.log("GPT API call limit reached!");
+      gptApiCallCounter = 0;
     }
 
     return result; // null if the move was illegal, the move object if the move was legal
