@@ -197,3 +197,22 @@ button:active,
   background-color: rgb(229, 227, 216, 1);
   color: rgba(8, 6, 6, 0.9);
 }
+
+@keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.loading-message {
+  animation: flash 1.5s infinite;
+}

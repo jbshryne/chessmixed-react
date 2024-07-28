@@ -141,7 +141,16 @@ function Game() {
       {gameMode === "play" && (
         <>
           <StatusBox>
-            {currentTurn === opponentColor && opponentName + status}
+            {currentTurn === opponentColor &&
+              opponent.playerId === "cpu" &&
+              status !== " is in checkmate!" && (
+                <span className="loading-message">{opponentName + status}</span>
+              )}
+            {currentTurn === opponentColor &&
+              opponent.playerId === "cpu" &&
+              status === " is in checkmate!" && (
+                <span>{opponentName + status}</span>
+              )}
           </StatusBox>
           {fetchedGame && (
             <GameplayBoard

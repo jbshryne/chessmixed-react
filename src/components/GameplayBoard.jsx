@@ -154,11 +154,16 @@ const GameplayBoard = ({
     }
 
     // check
-    newChess.inCheck() ? setStatus(" is in check!") : setStatus(" to move");
+    newChess.inCheck()
+      ? setStatus(" is in check!")
+      : cpuOpponentColor && gameCopy.currentTurn === cpuOpponentColor
+      ? setStatus(" is thinking...")
+      : setStatus(" to move");
 
     // checkmate
     if (newChess.isCheckmate()) {
       setStatus(" is in checkmate!");
+      return;
     }
 
     if (
@@ -169,9 +174,7 @@ const GameplayBoard = ({
     ) {
       console.log("requesting opponent move...");
       requestOpponentMove(newChess, gameCopy);
-    }
-
-    if (isLocalGame) {
+    } else {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/games/${gameId}/move`,
         {
