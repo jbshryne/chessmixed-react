@@ -113,6 +113,7 @@ const NewGame = () => {
               {friend.displayName}
             </option>
           ))}
+          <option value="cpu">CPU</option>
         </select>
       </label>
       <label htmlFor="current-turn">

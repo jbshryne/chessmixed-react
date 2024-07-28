@@ -1,19 +1,23 @@
 import { useState, useEffect } from "react";
-// import { useGame } from "../store/game-context";
 import { socket } from "../socket";
 import { Chess } from "chess.js";
-// import { Chessboard } from "react-chessboard";
 import Chessboard from "chessboardjsx";
 
-const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
-  // const { selected, setGame } = useGame();
+const GameplayBoard = ({
+  setCurrentTurn,
+  setStatus,
+  fetchedGame,
+  cpuOpponentColor,
+}) => {
   const gameId = fetchedGame._id;
   const [chess, setChess] = useState(new Chess(fetchedGame.fen));
+
   const currentUser = JSON.parse(
     localStorage.getItem("chessmixed_currentUser")
   );
 
-  // console.log(currentUser);
+  const isLocalGame =
+    fetchedGame.playerWhite.playerId === fetchedGame.playerBlack.playerId;
 
   function isDraggablePiece({ piece }) {
     if (fetchedGame.playerWhite.username !== fetchedGame.playerBlack.username) {
@@ -40,11 +44,25 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
   }
 
   let gptApiCallCounter = 0;
+  let makeAMoveCount = 0;
 
   async function requestOpponentMove(newChess, gameCopy) {
     gptApiCallCounter++;
+    console.log(
+      "requestOpponentMove fires",
+      gptApiCallCounter,
+      "cpuOpponentColor:",
+      cpuOpponentColor
+    );
+
+    if (gptApiCallCounter >= 5) {
+      console.log("GPT API call limit reached!");
+      gptApiCallCounter = 0;
+      return;
+    }
 
     console.log("fen on call #", gptApiCallCounter, ":", newChess.fen());
+    console.log(cpuOpponentColor, gameCopy.currentTurn);
 
     const response = await fetch(
       `${process.env.REACT_APP_API_URL}/games/${gameId}/move`,
@@ -59,7 +77,7 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
           currentTurn: gameCopy.currentTurn,
           pgn: newChess.pgn(),
           validMoves: newChess.moves({ verbose: true }),
-          opponent: "cpu",
+          cpuOpponentColor,
         }),
       }
     ).catch((error) => console.error(error));
@@ -73,13 +91,21 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
         to: data.to,
         promotion: "q",
       },
-      newChess
+      newChess,
+      true
     );
   }
 
-  async function makeAMove(move, newChess) {
-    console.log("makeAMove received:", move);
-    console.log("current turn:", chess.turn());
+  async function makeAMove(move, newChess, isCpuMove = false) {
+    makeAMoveCount++;
+    console.log(
+      "makeAMove fires",
+      makeAMoveCount,
+      "current turn:",
+      chess.turn(),
+      "isLocalGame:",
+      isLocalGame
+    );
     if (newChess === undefined) newChess = new Chess(chess.fen());
     let result;
 
@@ -88,7 +114,7 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
       console.log(result);
     } catch (error) {
       console.log(error);
-      if (move.local === undefined) {
+      if (isCpuMove) {
         requestOpponentMove(newChess, fetchedGame);
       }
       return null;
@@ -96,7 +122,6 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
     // console.log(newChess.fen());
 
     // promotion
-
     if (result.flags.includes("p")) {
       const promotion = prompt("Promote to: (q, r, b, n)");
       newChess = new Chess(chess.fen());
@@ -136,16 +161,42 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
       setStatus(" is in checkmate!");
     }
 
-    // setGame(gameCopy);
-
-    if (move.local && gptApiCallCounter < 3) {
+    if (
+      !isCpuMove &&
+      cpuOpponentColor &&
+      gameCopy.currentTurn === cpuOpponentColor &&
+      gptApiCallCounter < 5
+    ) {
+      console.log("requesting opponent move...");
       requestOpponentMove(newChess, gameCopy);
     }
 
-    if (gptApiCallCounter >= 3) {
-      console.log("GPT API call limit reached!");
-      gptApiCallCounter = 0;
+    if (isLocalGame) {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/games/${gameId}/move`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            gameId,
+            fen: newChess.fen(),
+            currentTurn: gameCopy.currentTurn,
+            pgn: newChess.pgn(),
+            validMoves: newChess.moves({ verbose: false }),
+          }),
+        }
+      ).catch((error) => console.error(error));
+
+      const data = await response.json();
+      console.log(data);
     }
+
+    // if (gptApiCallCounter >= 5) {
+    //   console.log("GPT API call limit reached!");
+    //   gptApiCallCounter = 0;
+    // }
 
     return result; // null if the move was illegal, the move object if the move was legal
   }
@@ -157,49 +208,38 @@ const GameplayBoard = ({ setCurrentTurn, setStatus, fetchedGame }) => {
       from: sourceSquare,
       to: targetSquare,
       promotion: "q",
-      local: true,
     });
 
     // illegal move
     if (move === null) return false;
 
-    socket.emit(
-      "sendNewMove",
-      {
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: "q",
-        local: false,
-      },
-      `game-${gameId}`
-    );
+    if (!isLocalGame) {
+      console.log("sending move to server...");
+
+      socket.emit(
+        "sendNewMove",
+        {
+          from: sourceSquare,
+          to: targetSquare,
+          promotion: "q",
+          playerId: currentUser._id,
+        },
+        `game-${gameId}`
+      );
+    }
 
     return true;
   }
 
   useEffect(() => {
     socket.on("getNewMove", (move) => {
-      // console.log("newMove", move);
-      makeAMove(move);
+      console.log("getNewMove received:", move);
+      if (move.playerId !== currentUser._id) makeAMove(move);
     });
   });
 
   return (
     <div className="board-container">
-      {/* from react-chessboard: */}
-      {/* <Chessboard
-        position={chess.fen()}
-        boardWidth={500}
-        isDraggablePiece={isDraggablePiece}
-        onPieceDrop={onDrop}
-        boardOrientation={
-          fetchedGame.playerWhite &&
-          fetchedGame.playerWhite.playerId === currentUser._id
-            ? "white"
-            : "black"
-        }
-      /> */}
-      {/* from chessboardjsx: */}
       <Chessboard
         position={chess.fen()}
         width={480}

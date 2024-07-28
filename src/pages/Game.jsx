@@ -22,13 +22,13 @@ function Game() {
 
   const [fetchedGame, setFetchedGame] = useState(null);
   const [currentTurn, setCurrentTurn] = useState(null);
-  const [editedCurrentTurn, setEditedCurrentTurn] = useState(null); // ["w", "b"
+  const [editedCurrentTurn, setEditedCurrentTurn] = useState(null);
   const [status, setStatus] = useState(" to move");
   const [position, setPosition] = useState(null);
-  // const [editedPosition, setEditedPosition] = useState(null);
   const currentUser = JSON.parse(
     localStorage.getItem("chessmixed_currentUser")
   );
+  let cpuOpponentColor = undefined;
 
   useEffect(() => {
     const selectedGame = JSON.parse(
@@ -47,7 +47,6 @@ function Game() {
         );
 
         const data = await response.json();
-        console.log(data);
         setFetchedGame(data);
       }
 
@@ -71,6 +70,10 @@ function Game() {
     fetchedGame.playerWhite.username === currentUser.username
       ? fetchedGame.playerBlack
       : fetchedGame.playerWhite;
+
+  if (opponent.username === "cpu") {
+    cpuOpponentColor = fetchedGame.playerWhite.username === "cpu" ? "w" : "b";
+  }
 
   const selfColor =
     fetchedGame.playerWhite.username === currentUser.username ? "w" : "b";
@@ -145,6 +148,7 @@ function Game() {
               setCurrentTurn={setCurrentTurn}
               setStatus={setStatus}
               fetchedGame={fetchedGame}
+              cpuOpponentColor={cpuOpponentColor}
             />
           )}
           <StatusBox>
